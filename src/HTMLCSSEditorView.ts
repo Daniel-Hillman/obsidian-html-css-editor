@@ -189,7 +189,13 @@ export class HTMLCSSEditorView extends ItemView {
 		});
 
 		// Toolbar title
-		this.toolbar.createEl('div', {
+		// Title container with version
+		const titleContainer = this.toolbar.createEl('div', {
+			cls: 'html-css-editor-toolbar-title-container'
+		});
+		titleContainer.style.cssText = 'display: flex; align-items: center; gap: 8px;';
+		
+		titleContainer.createEl('div', {
 			cls: 'html-css-editor-toolbar-title',
 			text: 'HTML/CSS Editor',
 			attr: {
@@ -197,6 +203,14 @@ export class HTMLCSSEditorView extends ItemView {
 				'aria-level': '2'
 			}
 		});
+		
+		// Version indicator
+		const versionEl = titleContainer.createEl('span', {
+			cls: 'html-css-editor-version',
+			text: 'v2.3.6-updated',
+			attr: { 'title': 'Plugin version - includes mobile tab fix and responsive improvements' }
+		});
+		versionEl.style.cssText = 'font-size: 10px; color: var(--text-muted); opacity: 0.6; background: var(--background-modifier-border); padding: 2px 6px; border-radius: 3px;';
 
 		const toolbarActions = this.toolbar.createEl('div', {
 			cls: 'html-css-editor-toolbar-actions'
@@ -1191,10 +1205,12 @@ export class HTMLCSSEditorView extends ItemView {
         /* Base styles */
         body {
             margin: 0;
-            padding: 16px;
+            padding: 4px;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background-color: ${this.plugin.settings.previewBackground};
             line-height: 1.6;
+            box-sizing: border-box;
+            overflow: hidden; /* Prevent scrollbars on tiny frames */
         }
         
         /* User CSS */
@@ -2760,7 +2776,7 @@ To load this project: Open HTML/CSS Editor and click "Load Project"
 		});
 
 		const devices = [
-			{ key: 'desktop', label: 'Desktop', width: 1920, height: 1080 },
+			{ key: 'desktop', label: 'Desktop', width: 1024, height: 768 },
 			{ key: 'laptop', label: 'Laptop', width: 1366, height: 768 },
 			{ key: 'tablet-landscape', label: 'Tablet Landscape', width: 1024, height: 768 },
 			{ key: 'tablet', label: 'Tablet Portrait', width: 768, height: 1024 },
@@ -2787,6 +2803,11 @@ To load this project: Open HTML/CSS Editor and click "Load Project"
 			if (selectedDevice) {
 				if (selectedDevice.key === 'custom') {
 					this.showCustomSizeDialog();
+					// Reset dropdown to current device after showing dialog
+					// This allows custom to be selected again
+					setTimeout(() => {
+						deviceSelect.value = this.currentDevice;
+					}, 100);
 				} else {
 					this.setDevicePreset(selectedDevice.key as any, selectedDevice.width, selectedDevice.height);
 				}
@@ -3079,18 +3100,30 @@ To load this project: Open HTML/CSS Editor and click "Load Project"
 	private setCustomDeviceSize(width: number, height: number) {
 		this.currentDevice = 'custom';
 		this.viewState.currentDevice = 'custom';
+		
 		if (this.previewFrameWrapper) {
 			this.previewFrameWrapper.style.width = `${width}px`;
 			this.previewFrameWrapper.style.height = `${height}px`;
+			// Ensure custom sizes don't shrink below their set dimensions
+			this.previewFrameWrapper.style.minWidth = `${width}px`;
+			this.previewFrameWrapper.style.minHeight = `${height}px`;
 		}
+		
+		// Also set the iframe size to match
+		if (this.previewFrame) {
+			this.previewFrame.style.width = `${width}px`;
+			this.previewFrame.style.height = `${height}px`;
+		}
+		
 		this.updateDevicePreset();
+		this.updatePreviewZoom(); // Ensure zoom is applied correctly
 		new Notice(`Custom size: ${width}×${height}px`);
 	}
 
 	private getCurrentDeviceDimensions(): { width: number; height: number } {
 		// Get current device dimensions based on selected device
 		const devices = {
-			'desktop': { width: 1920, height: 1080 },
+			'desktop': { width: 1024, height: 768 },
 			'laptop': { width: 1366, height: 768 },
 			'tablet-landscape': { width: 1024, height: 768 },
 			'tablet': { width: 768, height: 1024 },
@@ -3162,6 +3195,9 @@ To load this project: Open HTML/CSS Editor and click "Load Project"
 			// Set the frame wrapper size
 			this.previewFrameWrapper.style.width = `${width}px`;
 			this.previewFrameWrapper.style.height = `${height}px`;
+			// Ensure dimensions don't shrink below set size
+			this.previewFrameWrapper.style.minWidth = `${width}px`;
+			this.previewFrameWrapper.style.minHeight = `${height}px`;
 			
 			// Also set the iframe size to match
 			if (this.previewFrame) {
@@ -3176,7 +3212,9 @@ To load this project: Open HTML/CSS Editor and click "Load Project"
 
 	private updatePreviewZoom() {
 		if (this.previewFrameWrapper) {
-			this.previewFrameWrapper.className = `html-css-editor-preview-frame-wrapper zoom-${this.zoomLevel}`;
+			// Preserve existing device class when updating zoom
+			const deviceClass = this.currentDevice;
+			this.previewFrameWrapper.className = `html-css-editor-preview-frame-wrapper ${deviceClass} zoom-${this.zoomLevel}`;
 			// Apply zoom via transform
 			const scale = this.zoomLevel / 100;
 			this.previewFrameWrapper.style.transform = `scale(${scale})`;

@@ -343,6 +343,13 @@ export class HTMLCSSEditorSettingTab extends PluginSettingTab {
 			this.settingsContainer = containerEl;
 
 			containerEl.createEl('h2', { text: 'HTML/CSS Editor Settings' });
+			
+			// Version info
+			const versionInfo = containerEl.createEl('div', { 
+				cls: 'setting-item-description',
+				text: 'Version: 2.3.6-updated (includes mobile tab fix and responsive improvements)'
+			});
+			versionInfo.style.cssText = 'margin-bottom: 20px; padding: 8px; background: var(--background-secondary); border-radius: 4px; font-family: monospace;';
 
 			// Add settings info section
 			this.createSettingsInfo();

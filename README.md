@@ -10,6 +10,8 @@ Write HTML and CSS, see it live.
 
 This is a fun project for quick prototyping and learning. It's not meant to replace your actual IDE or development environment. For serious web development work, stick with VS Code, WebStorm, or your preferred professional tools.
 
+**Desktop/Laptop Only**: This plugin is optimized for desktop and laptop use. While it may work on mobile devices, the interface and features are designed for larger screens and keyboard/mouse interaction.
+
 ## Why I Made This
 
 I got tired of switching between Obsidian and CodePen just to test a quick CSS idea. So I built this plugin to turn Obsidian into a simple code playground.

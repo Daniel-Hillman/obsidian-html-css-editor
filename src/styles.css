@@ -528,6 +528,7 @@
     border-radius: var(--html-css-editor-border-radius);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    overflow: hidden; /* Prevent scrollbars on tiny frames */
 }
 
 .html-css-editor-preview-frame:hover {
@@ -1661,12 +1662,14 @@ ngs validation and enhancement styles */
 .html-css-editor-preview-frame-container {
     flex: 1;
     position: relative;
-    overflow: auto;
+    overflow: auto; /* Always allow scrolling when content exceeds container */
     background: var(--background-primary-alt, #ffffff);
     display: flex;
-    align-items: center;
+    align-items: flex-start; /* Changed from center to prevent shrinking */
     justify-content: center;
     min-height: 300px;
+    padding: 20px;
+    box-sizing: border-box;
 }
 
 .html-css-editor-preview-frame-wrapper {
@@ -1681,6 +1684,7 @@ ngs validation and enhancement styles */
 /* When device classes are applied, override the default 100% sizing */
 .html-css-editor-preview-frame-wrapper.mobile,
 .html-css-editor-preview-frame-wrapper.tablet,
+.html-css-editor-preview-frame-wrapper.desktop,
 .html-css-editor-preview-frame-wrapper.custom {
     width: auto !important;
     height: auto !important;
@@ -2062,23 +2066,34 @@ ngs validation and enhancement styles */
     color: var(--text-on-accent);
 }
 
-/* Device preset styles */
+/* Device preset styles - Fixed dimensions, no shrinking */
 .html-css-editor-preview-frame-wrapper.mobile {
     width: 375px !important;
     height: 667px !important;
     flex-shrink: 0;
+    min-width: 375px; /* Prevent shrinking below actual size */
+    min-height: 667px;
 }
 
 .html-css-editor-preview-frame-wrapper.tablet {
     width: 768px !important;
     height: 1024px !important;
     flex-shrink: 0;
+    min-width: 768px; /* Prevent shrinking below actual size */
+    min-height: 1024px;
 }
 
 .html-css-editor-preview-frame-wrapper.desktop {
-    width: 1200px !important;
-    height: 800px !important;
+    width: 1024px !important;
+    height: 768px !important;
     flex-shrink: 0;
+    min-width: 1024px; /* Prevent shrinking below actual size */
+    min-height: 768px;
+}
+
+.html-css-editor-preview-frame-wrapper.custom {
+    flex-shrink: 0;
+    /* Custom dimensions are set via inline styles, but ensure no shrinking */
 }
 
 /* Zoom level styles */

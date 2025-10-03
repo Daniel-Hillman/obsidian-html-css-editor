@@ -33,6 +33,16 @@ export default class HTMLCSSEditorPlugin extends Plugin {
 				}
 			});
 
+			// Add version check command
+			this.addCommand({
+				id: 'html-css-editor-version',
+				name: 'HTML/CSS Editor: Show Version Info',
+				callback: () => {
+					new Notice(`HTML/CSS Editor v2.3.6-updated\nIncludes: Mobile tab fix, responsive improvements, custom size fixes`, 5000);
+					console.log('HTML/CSS Editor Version: 2.3.6-updated');
+				}
+			});
+
 			// Add development command for testing settings (only in development)
 			if (process.env.NODE_ENV === 'development') {
 				this.addCommand({
@@ -180,6 +190,9 @@ export default class HTMLCSSEditorPlugin extends Plugin {
 	async activateView() {
 		try {
 			const { workspace } = this.app;
+			
+			// Debug log to confirm updated version is running
+			console.log('HTML/CSS Editor: Opening in new tab (v2.3.6-updated)');
 
 			let leaf: WorkspaceLeaf | null = null;
 			const leaves = workspace.getLeavesOfType(VIEW_TYPE_HTML_CSS_EDITOR);
@@ -188,16 +201,55 @@ export default class HTMLCSSEditorPlugin extends Plugin {
 				// A view is already open, focus it
 				leaf = leaves[0];
 			} else {
-				// Try to open in main area by getting an active leaf
-				leaf = workspace.getLeaf('tab');
-				await leaf.setViewState({ type: VIEW_TYPE_HTML_CSS_EDITOR, active: true });
+				// MOBILE FIX: Different approach for mobile vs desktop
+				// On mobile, we need to be more aggressive about main workspace
+				
+				// Close any sidebar panels first to force main area focus
+				workspace.leftSplit.collapse();
+				workspace.rightSplit.collapse();
+				
+				// Get the most recent leaf in main area
+				leaf = workspace.getMostRecentLeaf();
+				
+				// If no leaf or it's in sidebar, create new one
+				if (!leaf || this.isLeafInSidebar(leaf)) {
+					// Force creation of new tab in main workspace
+					leaf = workspace.getLeaf('tab');
+					
+					// Double-check it's not in sidebar
+					if (this.isLeafInSidebar(leaf)) {
+						// Last resort: detach and recreate
+						leaf.detach();
+						leaf = workspace.getLeaf('tab');
+					}
+				}
+				
+				if (leaf) {
+					await leaf.setViewState({ 
+						type: VIEW_TYPE_HTML_CSS_EDITOR, 
+						active: true 
+					});
+				} else {
+					throw new Error('Could not create leaf for HTML/CSS Editor');
+				}
 			}
 
-			// Focus the leaf
+			// Focus the leaf and ensure it's visible
 			workspace.revealLeaf(leaf);
+			
+			// Ensure the leaf is active
+			if (leaf) {
+				workspace.setActiveLeaf(leaf, { focus: true });
+			}
 		} catch (error) {
 			this.handleError('Failed to activate HTML/CSS Editor view', error);
 		}
+	}
+
+	private isLeafInSidebar(leaf: WorkspaceLeaf): boolean {
+		// Check if leaf is in left or right sidebar
+		const parent = leaf.parent;
+		return parent === this.app.workspace.leftSplit || parent === this.app.workspace.rightSplit;
 	}
 
 	private handleError(context: string, error: any) {
