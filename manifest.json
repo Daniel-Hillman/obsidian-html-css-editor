@@ -1,0 +1,11 @@
+{
+	"id": "html-css-editor",
+	"name": "HTML/CSS Editor",
+	"version": "2.3.6",
+	"minAppVersion": "0.15.0",
+	"description": "Professional HTML & CSS editor with live preview capabilities for Obsidian",
+	"author": "Daniel Hillman",
+	"authorUrl": "https://github.com/Daniel-Hillman",
+	"fundingUrl": "",
+	"isDesktopOnly": false
+}

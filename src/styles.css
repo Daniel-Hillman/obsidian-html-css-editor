@@ -1,0 +1,3532 @@
+/* HTML/CSS Editor Plugin Styles */
+/* VS Code-inspired professional editor interface with Obsidian theme integration */
+
+/* CSS Custom Properties for enhanced theming */
+:root {
+    --html-css-editor-accent: var(--interactive-accent);
+    --html-css-editor-accent-hover: var(--interactive-accent-hover);
+    --html-css-editor-success: var(--interactive-success, #10b981);
+    --html-css-editor-success-hover: var(--interactive-success-hover, #059669);
+    --html-css-editor-warning: #f59e0b;
+    --html-css-editor-error: #ef4444;
+    --html-css-editor-border-radius: 6px;
+    --html-css-editor-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    --html-css-editor-shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.15);
+    --html-css-editor-transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Dark theme adjustments */
+.theme-dark {
+    --html-css-editor-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    --html-css-editor-shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+/* Minimal theme specific adjustments */
+.minimal-theme .html-css-editor-main-container,
+.theme-minimal .html-css-editor-main-container {
+    --html-css-editor-border-radius: 4px;
+    font-family: var(--font-ui-smaller, var(--font-interface));
+}
+
+/* Enhanced main container with modern styling */
+.html-css-editor-main-container {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    background: linear-gradient(135deg, 
+        var(--background-primary) 0%, 
+        var(--background-primary-alt, var(--background-primary)) 100%);
+    color: var(--text-normal);
+    font-family: var(--font-interface);
+    border-radius: calc(var(--html-css-editor-border-radius) + 2px);
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), 
+                0 4px 16px rgba(var(--interactive-accent-rgb, 66, 165, 245), 0.08);
+    position: relative;
+    border: 1px solid var(--background-modifier-border);
+}
+
+.html-css-editor-main-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, 
+        var(--interactive-accent) 0%, 
+        var(--interactive-accent-hover) 50%, 
+        var(--interactive-accent) 100%);
+    z-index: 1;
+}
+
+/* Enhanced VS Code-style toolbar */
+.html-css-editor-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 20px;
+    border-bottom: 2px solid var(--interactive-accent);
+    background: linear-gradient(135deg, 
+        var(--background-secondary) 0%, 
+        var(--background-secondary-alt, var(--background-secondary)) 50%,
+        var(--background-secondary) 100%);
+    min-height: 52px;
+    backdrop-filter: blur(12px) saturate(1.1);
+    position: relative;
+    z-index: 10;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Toolbar glass effect for modern appearance */
+.html-css-editor-toolbar::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, 
+        transparent 0%, 
+        rgba(var(--interactive-accent-rgb, 66, 165, 245), 0.03) 50%, 
+        transparent 100%);
+    pointer-events: none;
+}
+
+.html-css-editor-toolbar-title-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.html-css-editor-toolbar-title {
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--text-normal);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    background: linear-gradient(135deg, 
+        var(--interactive-accent) 0%, 
+        var(--interactive-accent-hover) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.html-css-editor-toolbar-title::before {
+    content: '●';
+    color: #10b981;
+    font-size: 16px;
+    margin-right: 8px;
+    display: inline-block;
+}
+
+/* Dark theme power button */
+.theme-dark .html-css-editor-toolbar-title::before {
+    border-color: #34d399;
+}
+
+.theme-dark .html-css-editor-toolbar-title::after {
+    background: #34d399;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+.html-css-editor-toolbar-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+    overflow-x: auto;
+    padding: 4px 0;
+    min-height: 40px;
+}
+
+.html-css-editor-toolbar-section {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.html-css-editor-toolbar-section.export-section {
+    padding-right: 8px;
+    border-right: 1px solid var(--background-modifier-border);
+}
+
+.html-css-editor-toolbar-btn {
+    padding: 6px 10px;
+    border: 1px solid var(--background-modifier-border);
+    border-radius: var(--html-css-editor-border-radius);
+    background: var(--background-primary);
+    color: var(--text-normal);
+    font-size: 11px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--html-css-editor-transition);
+    position: relative;
+    overflow: hidden;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    min-height: 28px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    max-width: 120px;
+    text-overflow: ellipsis;
+}
+
+/* Removed light ray hover effect */
+
+.html-css-editor-toolbar-btn:hover {
+    background-color: var(--background-modifier-hover);
+    border-color: var(--background-modifier-border-hover);
+    transform: translateY(-1px);
+    box-shadow: var(--html-css-editor-shadow);
+}
+
+/* Removed light ray hover effect */
+
+.html-css-editor-toolbar-btn:active {
+    background-color: var(--background-modifier-active);
+    transform: translateY(0);
+    box-shadow: none;
+}
+
+/* Help button specific styles */
+.html-css-editor-toolbar-btn.help-btn {
+    font-size: 16px;
+    padding: 4px 8px;
+    min-width: auto;
+    background: var(--interactive-accent);
+    color: var(--text-on-accent);
+    border-color: var(--interactive-accent);
+}
+
+.html-css-editor-toolbar-btn.help-btn:hover {
+    background: var(--interactive-accent-hover);
+    border-color: var(--interactive-accent-hover);
+    transform: scale(1.1);
+}
+
+/* Refresh button uses neutral styling */
+.html-css-editor-refresh-btn {
+    background: var(--background-secondary);
+    color: var(--text-normal);
+    border-color: var(--background-modifier-border);
+}
+
+.html-css-editor-refresh-btn:hover {
+    background: var(--background-modifier-hover);
+    border-color: var(--background-modifier-border-hover);
+}
+
+.html-css-editor-refresh-btn:active {
+    background: var(--background-modifier-active);
+}
+
+/* VS Code-style export buttons with enhanced styling */
+.html-css-editor-toolbar-btn.export-btn {
+    font-weight: 600;
+    padding: 8px 16px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 11px;
+    border-radius: calc(var(--html-css-editor-border-radius) - 1px);
+}
+
+/* All export buttons use neutral styling */
+.html-css-editor-toolbar-btn.save-btn,
+.html-css-editor-toolbar-btn.export-sass-btn {
+    background: var(--background-secondary);
+    color: var(--text-normal);
+    border-color: var(--background-modifier-border);
+}
+
+.html-css-editor-toolbar-btn.save-btn:hover:not(:disabled),
+.html-css-editor-toolbar-btn.export-sass-btn:hover:not(:disabled) {
+    background: var(--background-modifier-hover);
+    border-color: var(--background-modifier-border-hover);
+}
+
+.html-css-editor-toolbar-btn.copy-btn {
+    background: var(--interactive-accent);
+    color: var(--text-on-accent);
+    border-color: var(--interactive-accent);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Removed light ray effect from copy button */
+
+.html-css-editor-toolbar-btn.copy-btn:hover:not(:disabled) {
+    background: var(--interactive-accent-hover);
+    border-color: var(--interactive-accent-hover);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    transform: translateY(-1px);
+}
+
+.html-css-editor-toolbar-btn.copy-btn:active {
+    background: var(--interactive-accent);
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.html-css-editor-toolbar-btn.export-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background-color: var(--background-modifier-border);
+    color: var(--text-muted);
+    border-color: var(--background-modifier-border);
+}
+
+.html-css-editor-toolbar-btn.export-btn:disabled:hover {
+    background-color: var(--background-modifier-border);
+    border-color: var(--background-modifier-border);
+}
+
+/* Content container */
+.html-css-editor-content-container {
+    flex: 1;
+    display: flex;
+    position: relative;
+    overflow: hidden;
+}
+
+.html-css-editor-content-container.layout-vertical {
+    flex-direction: row;
+}
+
+/* Horizontal layout removed - only side-by-side supported */
+
+/* Panes */
+.html-css-editor-pane {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background-color: var(--background-primary);
+}
+
+.editor-pane {
+    border-right: 1px solid var(--background-modifier-border);
+}
+
+/* Horizontal editor pane styles removed */
+
+.preview-pane {
+    border-left: 1px solid var(--background-modifier-border);
+}
+
+/* Horizontal preview pane styles removed */
+
+/* VS Code-style editor sections */
+.html-css-editor-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    background: var(--background-primary);
+    border-radius: var(--html-css-editor-border-radius);
+    overflow: hidden;
+    transition: var(--html-css-editor-transition);
+}
+
+.html-css-editor-section:first-child {
+    border-bottom: 1px solid var(--background-modifier-border);
+    margin-bottom: 1px;
+}
+
+.html-css-editor-section:hover {
+    box-shadow: inset 0 0 0 1px var(--background-modifier-border-hover);
+}
+
+.html-css-editor-label {
+    padding: 10px 16px;
+    background: linear-gradient(180deg, 
+        var(--background-secondary) 0%, 
+        var(--background-secondary-alt, var(--background-secondary)) 100%);
+    border-bottom: 1px solid var(--background-modifier-border);
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    position: relative;
+    user-select: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 36px;
+}
+
+.html-css-editor-label::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: var(--html-css-editor-accent);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.html-css-editor-section:hover .html-css-editor-label::before {
+    opacity: 1;
+}
+
+/* Enhanced CodeMirror containers with VS Code styling */
+.html-css-editor-codemirror-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: var(--background-primary);
+    position: relative;
+}
+
+/* Removed decorative horizontal line that was blocking content */
+
+.html-css-editor-codemirror-container .cm-editor {
+    flex: 1;
+    height: 100%;
+    background: transparent;
+    border-radius: 0;
+}
+
+.html-css-editor-codemirror-container .cm-scroller {
+    overflow: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--background-modifier-border) transparent;
+}
+
+/* Custom scrollbar styling for WebKit browsers */
+.html-css-editor-codemirror-container .cm-scroller::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.html-css-editor-codemirror-container .cm-scroller::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.html-css-editor-codemirror-container .cm-scroller::-webkit-scrollbar-thumb {
+    background: var(--background-modifier-border);
+    border-radius: 4px;
+    transition: background 0.2s ease;
+}
+
+.html-css-editor-codemirror-container .cm-scroller::-webkit-scrollbar-thumb:hover {
+    background: var(--background-modifier-border-hover);
+}
+
+/* CodeMirror theme integration */
+.html-css-editor-codemirror-container .cm-editor.cm-focused {
+    outline: none;
+}
+
+.html-css-editor-codemirror-container .cm-content {
+    padding: 12px;
+    min-height: 200px;
+}
+
+.html-css-editor-codemirror-container .cm-gutters {
+    background-color: var(--background-secondary);
+    border-right: 1px solid var(--background-modifier-border);
+}
+
+.html-css-editor-codemirror-container .cm-lineNumbers .cm-gutterElement {
+    color: var(--text-muted);
+    font-size: 12px;
+}
+
+.html-css-editor-codemirror-container .cm-activeLine {
+    background-color: var(--background-modifier-hover);
+}
+
+.html-css-editor-codemirror-container .cm-selectionBackground {
+    background-color: var(--text-selection) !important;
+}
+
+.html-css-editor-codemirror-container .cm-cursor {
+    border-left-color: var(--text-normal);
+}
+
+/* Text areas (fallback) */
+.html-css-editor-textarea {
+    flex: 1;
+    border: none;
+    outline: none;
+    padding: 12px;
+    font-family: "JetBrains Mono", "Fira Code", "SF Mono", Monaco, "Cascadia Code", "Roboto Mono", Consolas, "Courier New", monospace;
+    font-size: 14px;
+    line-height: 1.4;
+    background-color: var(--background-primary);
+    color: var(--text-normal);
+    resize: none;
+    tab-size: 2;
+}
+
+.html-css-editor-textarea::placeholder {
+    color: var(--text-faint);
+    font-style: italic;
+}
+
+.html-css-editor-textarea:focus {
+    background-color: var(--background-primary-alt);
+}
+
+/* Enhanced preview with modern styling */
+.html-css-editor-preview-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: var(--background-primary);
+    border-radius: calc(var(--html-css-editor-border-radius) + 2px);
+    position: relative;
+    box-shadow: inset 0 0 0 1px var(--background-modifier-border);
+}
+
+.html-css-editor-preview-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border: 2px solid transparent;
+    border-radius: calc(var(--html-css-editor-border-radius) + 2px);
+    background: linear-gradient(135deg, 
+        var(--interactive-accent) 0%, 
+        var(--interactive-accent-hover) 100%) border-box;
+    -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: exclude;
+    mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.html-css-editor-preview-container:hover::before {
+    opacity: 1;
+}
+
+.html-css-editor-preview-frame {
+    flex: 1;
+    border: none;
+    background-color: var(--background-primary-alt, #ffffff);
+    width: 100%;
+    height: 100%;
+    border-radius: var(--html-css-editor-border-radius);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.html-css-editor-preview-frame:hover {
+    transform: scale(1.001);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+/* Resize handle */
+.html-css-editor-resize-handle {
+    position: absolute;
+    background-color: var(--background-modifier-border);
+    cursor: col-resize;
+    z-index: 10;
+    transition: background-color 0.2s ease;
+}
+
+.layout-vertical .html-css-editor-resize-handle {
+    width: 4px;
+    height: 100%;
+    transform: translateX(-50%);
+    cursor: col-resize;
+}
+
+/* Horizontal resize handle removed */
+
+.html-css-editor-resize-handle:hover {
+    background-color: var(--interactive-accent);
+}
+
+/* Dark theme adjustments */
+.theme-dark .html-css-editor-preview-frame {
+    background-color: #1e1e1e;
+}
+
+/* Enhanced responsive design with mobile-first approach */
+@media (max-width: 1024px) {
+    .html-css-editor-toolbar {
+        padding: 8px 12px;
+        min-height: 40px;
+    }
+    
+    .html-css-editor-toolbar-btn {
+        padding: 5px 10px;
+        font-size: 11px;
+    }
+    
+    .html-css-editor-toolbar-btn.export-btn {
+        padding: 6px 12px;
+    }
+}
+
+@media (max-width: 768px) {
+    .html-css-editor-content-container {
+        flex-direction: column !important;
+    }
+    
+    .html-css-editor-resize-handle {
+        height: 4px !important;
+        width: 100% !important;
+        cursor: row-resize !important;
+        left: 0 !important;
+        top: 50% !important;
+        transform: translateY(-50%) !important;
+        background: linear-gradient(90deg, 
+            transparent 0%, 
+            var(--background-modifier-border) 20%, 
+            var(--html-css-editor-accent) 50%, 
+            var(--background-modifier-border) 80%, 
+            transparent 100%);
+    }
+    
+    .editor-pane {
+        border-right: none !important;
+        border-bottom: 1px solid var(--background-modifier-border) !important;
+        border-radius: var(--html-css-editor-border-radius) var(--html-css-editor-border-radius) 0 0;
+    }
+    
+    .preview-pane {
+        border-left: none !important;
+        border-top: 1px solid var(--background-modifier-border) !important;
+        border-radius: 0 0 var(--html-css-editor-border-radius) var(--html-css-editor-border-radius);
+    }
+    
+    .html-css-editor-toolbar-actions {
+        gap: 8px;
+    }
+    
+    .html-css-editor-toolbar-section {
+        gap: 4px;
+    }
+}
+
+/* Accessibility */
+.html-css-editor-toolbar-btn:focus,
+.html-css-editor-textarea:focus {
+    outline: 2px solid var(--interactive-accent);
+    outline-offset: 2px;
+}
+
+/* Enhanced animations for smooth transitions */
+.html-css-editor-pane {
+    transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1), 
+                height 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+                opacity 0.2s ease;
+    will-change: width, height;
+}
+
+.html-css-editor-content-container {
+    transition: flex-direction 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.html-css-editor-content-container.layout-transitioning .html-css-editor-pane {
+    transition: width 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), 
+                height 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.html-css-editor-content-container.resizing .html-css-editor-pane {
+    transition: none;
+    pointer-events: none;
+}
+
+.html-css-editor-content-container.resizing {
+    user-select: none;
+}
+
+/* Enhanced focus management styles */
+.html-css-editor-codemirror-container .cm-editor:focus-within {
+    transition: box-shadow 0.15s ease;
+}
+
+/* Smooth text selection */
+.html-css-editor-codemirror-container .cm-content {
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+}
+
+.html-css-editor-codemirror-container .cm-line {
+    transition: background-color 0.1s ease;
+}
+
+.html-css-editor-codemirror-container .cm-line:hover {
+    background-color: rgba(var(--interactive-accent-rgb, 66, 165, 245), 0.02);
+}
+
+/* Advanced completion styling */
+.html-css-completion-option {
+    padding: 6px 8px;
+    border-radius: 4px;
+    transition: background-color 0.15s ease;
+}
+
+.html-css-completion-option:hover {
+    background-color: var(--background-modifier-hover);
+}
+
+.html-css-completion-option[aria-selected="true"] {
+    background-color: var(--interactive-accent);
+    color: var(--text-on-accent);
+}
+
+/* Enhanced code folding styles */
+.html-css-editor-codemirror-container .cm-foldGutter .cm-gutterElement {
+    cursor: pointer;
+    user-select: none;
+    transition: color 0.2s ease;
+}
+
+.html-css-editor-codemirror-container .cm-foldGutter .cm-gutterElement:hover {
+    color: var(--interactive-accent);
+}
+
+/* Collapsible sections enhancement */
+.html-css-editor-section {
+    position: relative;
+    overflow: hidden;
+}
+
+.html-css-editor-section.collapsed {
+    flex: 0 0 auto;
+    min-height: 40px;
+}
+
+.html-css-editor-section.collapsed .html-css-editor-codemirror-container {
+    display: none;
+}
+
+.html-css-editor-label {
+    position: relative;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.html-css-editor-label:hover {
+    background-color: var(--background-modifier-hover);
+}
+
+.html-css-editor-label::after {
+    content: '▼';
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 10px;
+    color: var(--text-muted);
+    transition: transform 0.2s ease;
+}
+
+.html-css-editor-section.collapsed .html-css-editor-label::after {
+    transform: translateY(-50%) rotate(-90deg);
+}
+
+/* Enhanced keyboard navigation indicators */
+.html-css-editor-toolbar-btn:focus-visible {
+    outline: 2px solid var(--interactive-accent);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 4px rgba(var(--interactive-accent-rgb), 0.1);
+}
+
+/* Responsive enhancements */
+@media (max-width: 640px) {
+    .html-css-editor-toolbar {
+        flex-wrap: wrap;
+        gap: 8px;
+        padding: 12px;
+        min-height: auto;
+    }
+    
+    .html-css-editor-toolbar-title {
+        flex: 1 1 100%;
+        margin-bottom: 8px;
+        text-align: center;
+    }
+    
+    .html-css-editor-toolbar-actions {
+        width: 100%;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+    
+    .html-css-editor-toolbar-section {
+        flex: 1 1 auto;
+        justify-content: center;
+        min-width: fit-content;
+    }
+    
+    .html-css-editor-toolbar-section.export-section {
+        border-right: none;
+        border-bottom: 1px solid var(--background-modifier-border);
+        padding-bottom: 8px;
+        margin-bottom: 8px;
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .html-css-editor-main-container {
+        border-radius: 0;
+        margin: 0;
+    }
+    
+    .html-css-editor-toolbar {
+        padding: 8px;
+        border-radius: 0;
+    }
+    
+    .html-css-editor-toolbar-btn {
+        padding: 8px 12px;
+        font-size: 12px;
+        min-height: 36px;
+        touch-action: manipulation;
+    }
+    
+    .html-css-editor-toolbar-btn.export-btn {
+        padding: 10px 16px;
+        width: 100%;
+        margin: 2px 0;
+    }
+    
+    .html-css-editor-section {
+        border-radius: 0;
+    }
+    
+    .html-css-editor-label {
+        padding: 12px 16px;
+        font-size: 12px;
+        min-height: 44px;
+        touch-action: manipulation;
+    }
+    
+    .html-css-editor-codemirror-container .cm-content {
+        padding: 16px;
+        font-size: 14px;
+        line-height: 1.5;
+    }
+    
+    .html-css-editor-resize-handle {
+        height: 8px !important;
+        touch-action: pan-y;
+    }
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+    .html-css-editor-toolbar-btn {
+        min-height: 44px;
+        padding: 10px 16px;
+        touch-action: manipulation;
+    }
+    
+    .html-css-editor-label {
+        min-height: 44px;
+        touch-action: manipulation;
+    }
+    
+    .html-css-editor-resize-handle {
+        width: 6px !important;
+        height: 6px !important;
+        touch-action: pan-x pan-y;
+    }
+    
+    .layout-vertical .html-css-editor-resize-handle {
+        width: 8px !important;
+        touch-action: pan-x;
+    }
+    
+    /* Horizontal resize handle mobile styles removed */
+}
+
+/* Enhanced VS Code-style status indicators */
+.html-css-editor-status-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 4px 16px;
+    background: var(--background-secondary);
+    border-top: 1px solid var(--background-modifier-border);
+    font-size: 11px;
+    color: var(--text-muted);
+    min-height: 24px;
+}
+
+.html-css-editor-status-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 6px;
+    border-radius: 3px;
+    transition: var(--html-css-editor-transition);
+}
+
+.html-css-editor-status-item:hover {
+    background: var(--background-modifier-hover);
+    color: var(--text-normal);
+}
+
+/* Enhanced theme integration for different Obsidian themes */
+.theme-light .html-css-editor-main-container {
+    --html-css-editor-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    --html-css-editor-shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.theme-dark .html-css-editor-main-container {
+    --html-css-editor-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+    --html-css-editor-shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+/* Minimal theme specific enhancements */
+.minimal-theme .html-css-editor-toolbar,
+.theme-minimal .html-css-editor-toolbar {
+    border-radius: 0;
+    backdrop-filter: none;
+}
+
+.minimal-theme .html-css-editor-toolbar-btn,
+.theme-minimal .html-css-editor-toolbar-btn {
+    border-radius: 3px;
+    font-size: 11px;
+}
+
+.minimal-theme .html-css-editor-section,
+.theme-minimal .html-css-editor-section {
+    border-radius: 3px;
+}
+
+/* Sass toggle button */
+.html-css-editor-label-content {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 12px;
+    width: 100%;
+    position: relative;
+}
+
+.html-css-editor-label-text {
+    flex: 0 0 auto;
+}
+
+.html-css-editor-sass-toggle {
+    flex-shrink: 0;
+    position: absolute;
+    left: 60px;
+    z-index: 10;
+    cursor: pointer;
+}
+
+.sass-toggle-switch {
+    display: flex;
+    border: 1px solid var(--background-modifier-border);
+    border-radius: 4px;
+    overflow: hidden;
+    background: var(--background-primary);
+}
+
+.sass-toggle-option {
+    padding: 3px 8px;
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--text-muted);
+    background: var(--background-primary);
+    transition: all 0.2s ease;
+    cursor: pointer;
+    border: none;
+    user-select: none;
+}
+
+.sass-toggle-option:first-child {
+    border-right: 1px solid var(--background-modifier-border);
+}
+
+.sass-toggle-option.active {
+    background: var(--interactive-accent);
+    color: var(--text-on-accent);
+}
+
+.sass-toggle-option:hover:not(.active) {
+    background: var(--background-modifier-hover);
+    color: var(--text-normal);
+}
+
+/* Compilation status indicator */
+.html-css-editor-compilation-status {
+    padding: 4px 12px;
+    font-size: 11px;
+    border-radius: 3px;
+    background: var(--background-secondary);
+    color: var(--text-muted);
+    border: 1px solid var(--background-modifier-border);
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.html-css-editor-compilation-status.compiling {
+    background: var(--interactive-accent);
+    color: var(--text-on-accent);
+    border-color: var(--interactive-accent);
+}
+
+.html-css-editor-compilation-status.success {
+    background: var(--background-modifier-success, #d4edda);
+    color: var(--text-success, #155724);
+    border-color: var(--background-modifier-success-hover, #c3e6cb);
+}
+
+.html-css-editor-compilation-status.error {
+    background: var(--background-modifier-error, #f8d7da);
+    color: var(--text-error, #721c24);
+    border-color: var(--background-modifier-error-hover, #f5c6cb);
+}
+
+/* Enhanced focus states for better accessibility */
+.html-css-editor-toolbar-btn:focus-visible,
+.html-css-editor-label:focus-visible {
+    outline: 2px solid var(--html-css-editor-accent);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 4px rgba(var(--interactive-accent-rgb, 66, 165, 245), 0.1);
+}
+
+/* Loading states for better UX */
+.html-css-editor-loading {
+    position: relative;
+    overflow: hidden;
+}
+
+.html-css-editor-loading::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, 
+        transparent, 
+        var(--html-css-editor-accent), 
+        transparent);
+    animation: loading-shimmer 1.5s infinite;
+}
+
+@keyframes loading-shimmer {
+    0% { left: -100%; }
+    100% { left: 100%; }
+}
+
+/* Enhanced error states */
+.html-css-editor-error {
+    border-color: var(--html-css-editor-error) !important;
+    box-shadow: 0 0 0 1px var(--html-css-editor-error);
+}
+
+.html-css-editor-warning {
+    border-color: var(--html-css-editor-warning) !important;
+    box-shadow: 0 0 0 1px var(--html-css-editor-warning);
+}
+
+/* Accessibility improvements */
+@media (prefers-reduced-motion: reduce) {
+    .html-css-editor-pane,
+    .html-css-editor-content-container,
+    .html-css-editor-codemirror-container .cm-editor,
+    .html-css-completion-option,
+    .html-css-editor-label,
+    .html-css-editor-toolbar-btn,
+    .html-css-editor-section {
+        transition: none;
+        animation: none;
+    }
+    
+    .html-css-editor-toolbar-btn::before {
+        display: none;
+    }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .html-css-editor-toolbar-btn {
+        border-width: 2px;
+        font-weight: 700;
+    }
+    
+    .html-css-editor-codemirror-container .cm-editor.cm-focused {
+        outline-width: 3px;
+        outline-style: solid;
+    }
+    
+    .html-css-editor-label::before {
+        width: 4px;
+    }
+    
+    .html-css-editor-resize-handle {
+        background: var(--text-normal) !important;
+    }
+}
+
+/* Print styles */
+@media print {
+    .html-css-editor-main-container {
+        box-shadow: none;
+        border: 1px solid #ccc;
+    }
+    
+    .html-css-editor-toolbar {
+        display: none;
+    }
+    
+    .html-css-editor-resize-handle {
+        display: none;
+    }
+    
+    .html-css-editor-content-container {
+        flex-direction: row !important;
+    }
+    
+    .editor-pane,
+    .preview-pane {
+        width: 50% !important;
+        height: auto !important;
+    }
+}
+/* A
+dvanced VS Code-style enhancements */
+
+/* Breadcrumb-style navigation for sections */
+.html-css-editor-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 10px;
+    color: var(--text-faint);
+    padding: 4px 16px;
+    background: var(--background-secondary-alt, var(--background-secondary));
+    border-bottom: 1px solid var(--background-modifier-border);
+}
+
+.html-css-editor-breadcrumb-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.html-css-editor-breadcrumb-separator {
+    color: var(--text-faint);
+    opacity: 0.5;
+}
+
+/* Enhanced minimap-style scrollbar for large content */
+.html-css-editor-minimap {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 80px;
+    background: var(--background-secondary);
+    border-left: 1px solid var(--background-modifier-border);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+    z-index: 5;
+}
+
+.html-css-editor-codemirror-container:hover .html-css-editor-minimap {
+    opacity: 0.7;
+}
+
+/* VS Code-style tab indicators */
+.html-css-editor-tab-indicator {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--html-css-editor-accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.html-css-editor-section:hover .html-css-editor-tab-indicator {
+    transform: scaleX(1);
+}
+
+/* Enhanced syntax highlighting integration */
+.html-css-editor-codemirror-container .cm-editor .cm-line {
+    padding-left: 4px;
+    padding-right: 4px;
+}
+
+.html-css-editor-codemirror-container .cm-editor .cm-line:hover {
+    background: rgba(var(--interactive-accent-rgb, 66, 165, 245), 0.05);
+}
+
+/* VS Code-style bracket matching */
+.html-css-editor-codemirror-container .cm-matchingBracket {
+    background: rgba(var(--interactive-accent-rgb, 66, 165, 245), 0.2);
+    border: 1px solid var(--html-css-editor-accent);
+    border-radius: 2px;
+}
+
+/* Enhanced search and replace styling */
+.html-css-editor-search-panel {
+    background: var(--background-primary);
+    border: 1px solid var(--background-modifier-border);
+    border-radius: var(--html-css-editor-border-radius);
+    box-shadow: var(--html-css-editor-shadow);
+    padding: 8px;
+    margin: 8px;
+}
+
+/* Performance indicator */
+.html-css-editor-performance-indicator {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    background: var(--background-secondary);
+    border: 1px solid var(--background-modifier-border);
+    border-radius: 12px;
+    padding: 4px 8px;
+    font-size: 10px;
+    color: var(--text-muted);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 10;
+}
+
+.html-css-editor-main-container:hover .html-css-editor-performance-indicator {
+    opacity: 1;
+}
+
+/* Enhanced drag and drop styling */
+.html-css-editor-drop-zone {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(var(--interactive-accent-rgb, 66, 165, 245), 0.1);
+    border: 2px dashed var(--html-css-editor-accent);
+    border-radius: var(--html-css-editor-border-radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--html-css-editor-accent);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    z-index: 100;
+}
+
+.html-css-editor-drop-zone.active {
+    opacity: 1;
+}
+
+/* Theme-specific enhancements for popular Obsidian themes */
+
+/* Atom theme compatibility */
+.theme-atom .html-css-editor-main-container {
+    --html-css-editor-border-radius: 8px;
+}
+
+.theme-atom .html-css-editor-toolbar-btn {
+    border-radius: 6px;
+}
+
+/* Nord theme compatibility */
+.theme-nord .html-css-editor-main-container {
+    --html-css-editor-accent: #88c0d0;
+    --html-css-editor-success: #a3be8c;
+}
+
+/* Dracula theme compatibility */
+.theme-dracula .html-css-editor-main-container {
+    --html-css-editor-accent: #bd93f9;
+    --html-css-editor-success: #50fa7b;
+}
+
+/* Solarized theme compatibility */
+.theme-solarized .html-css-editor-main-container {
+    --html-css-editor-accent: #268bd2;
+    --html-css-editor-success: #859900;
+}
+
+/* California Coast theme compatibility */
+.theme-california-coast .html-css-editor-main-container,
+.theme-things .html-css-editor-main-container {
+    --html-css-editor-border-radius: 12px;
+}
+
+.theme-california-coast .html-css-editor-toolbar-btn,
+.theme-things .html-css-editor-toolbar-btn {
+    border-radius: 8px;
+}
+
+/* Enhanced animation for smooth interactions */
+@keyframes pulse-accent {
+    0%, 100% { 
+        box-shadow: 0 0 0 0 rgba(var(--interactive-accent-rgb, 66, 165, 245), 0.4);
+    }
+    50% { 
+        box-shadow: 0 0 0 8px rgba(var(--interactive-accent-rgb, 66, 165, 245), 0);
+    }
+}
+
+.html-css-editor-toolbar-btn:active {
+    animation: pulse-accent 0.6s ease-out;
+}
+
+/* Enhanced focus management for keyboard navigation */
+.html-css-editor-main-container:focus-within {
+    box-shadow: var(--html-css-editor-shadow-hover);
+}
+
+.html-css-editor-keyboard-navigation .html-css-editor-toolbar-btn:focus,
+.html-css-editor-keyboard-navigation .html-css-editor-label:focus {
+    background: var(--background-modifier-hover);
+    transform: translateY(-1px);
+}
+
+/* Final responsive polish */
+@media (max-width: 360px) {
+    .html-css-editor-toolbar-title::before {
+        display: none;
+    }
+    
+    .html-css-editor-toolbar-btn {
+        font-size: 10px;
+        padding: 6px 8px;
+    }
+    
+    .html-css-editor-toolbar-btn.export-btn {
+        font-size: 11px;
+        padding: 8px 12px;
+    }
+}
+
+/* Ensure proper z-index stacking */
+.html-css-editor-main-container {
+    z-index: 1;
+}
+
+.html-css-editor-toolbar {
+    z-index: 10;
+}
+
+.html-css-editor-resize-handle {
+    z-index: 20;
+}
+
+.html-css-editor-drop-zone {
+    z-index: 100;
+}/* Setti
+ngs validation and enhancement styles */
+.html-css-editor-settings-info {
+	margin-bottom: 20px;
+	padding: 12px;
+	background: var(--background-secondary);
+	border-radius: 6px;
+	border: 1px solid var(--background-modifier-border);
+}
+
+.html-css-editor-settings-actions {
+	margin-top: 30px;
+	padding-top: 20px;
+	border-top: 1px solid var(--background-modifier-border);
+}
+
+.html-css-editor-validation-indicator {
+	font-size: 12px;
+	margin-top: 4px;
+	min-height: 16px;
+	color: var(--text-muted);
+}
+
+.html-css-editor-validation-indicator.error {
+	color: var(--text-error);
+	font-weight: 500;
+}
+
+.setting-item.has-validation-error {
+	border-left: 3px solid var(--text-error);
+	padding-left: 8px;
+	background: var(--background-modifier-error);
+}
+
+.setting-item-info.mod-warning {
+	background: var(--background-modifier-error);
+	border-left: 3px solid var(--text-error);
+	padding-left: 12px;
+}
+
+.setting-item-info.mod-warning .setting-item-name {
+	color: var(--text-error);
+	font-weight: 600;
+}
+
+/* Enhanced settings controls */
+.setting-item .setting-item-control input[type="range"] {
+	transition: all 0.2s ease;
+}
+
+.setting-item .setting-item-control input[type="range"]:hover {
+	transform: scale(1.02);
+}
+
+.setting-item .setting-item-control .dropdown {
+	transition: border-color 0.2s ease;
+}
+
+.setting-item .setting-item-control .dropdown:focus-within {
+	border-color: var(--interactive-accent);
+	box-shadow: 0 0 0 1px var(--interactive-accent-hover);
+}
+
+/* Settings actions buttons */
+.html-css-editor-settings-actions .setting-item-control button {
+	transition: all 0.2s ease;
+}
+
+.html-css-editor-settings-actions .setting-item-control button:hover {
+	transform: translateY(-1px);
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.html-css-editor-settings-actions .setting-item-control button.mod-warning {
+	background: var(--interactive-accent);
+	color: var(--text-on-accent);
+}
+
+.html-css-editor-settings-actions .setting-item-control button.mod-warning:hover {
+	background: var(--interactive-accent-hover);
+}
+
+/* Import/Export text areas */
+.html-css-editor-settings-actions textarea {
+	font-family: "JetBrains Mono", "Fira Code", "SF Mono", Monaco, "Cascadia Code", "Roboto Mono", Consolas, "Courier New", monospace;
+	font-size: 12px;
+	line-height: 1.4;
+	border: 1px solid var(--background-modifier-border);
+	border-radius: 4px;
+	padding: 8px;
+	background: var(--background-primary);
+	color: var(--text-normal);
+	resize: vertical;
+	min-height: 100px;
+}
+
+.html-css-editor-settings-actions textarea:focus {
+	border-color: var(--interactive-accent);
+	outline: none;
+	box-shadow: 0 0 0 1px var(--interactive-accent-hover);
+}
+
+/* Settings info styling */
+.html-css-editor-settings-info .setting-item-name {
+	font-weight: 600;
+	color: var(--text-normal);
+	margin-bottom: 4px;
+}
+
+.html-css-editor-settings-info .setting-item-description {
+	font-size: 13px;
+	color: var(--text-muted);
+	line-height: 1.4;
+}
+
+.html-css-editor-settings-info .setting-item-description div {
+	margin-bottom: 2px;
+}
+
+/* Validation error list */
+.html-css-editor-settings-info ul {
+	margin: 8px 0 0 0;
+	padding-left: 20px;
+}
+
+.html-css-editor-settings-info li {
+	margin-bottom: 4px;
+	color: var(--text-error);
+	font-size: 12px;
+}
+
+/* Real-time feedback animations */
+@keyframes settingUpdated {
+	0% { background: var(--interactive-accent-hover); }
+	100% { background: transparent; }
+}
+
+.setting-item.updated {
+	animation: settingUpdated 0.5s ease-out;
+}
+
+/* Responsive settings layout */
+@media (max-width: 768px) {
+	.html-css-editor-settings-actions textarea {
+		min-height: 80px;
+		font-size: 11px;
+	}
+	
+	.html-css-editor-settings-info {
+		padding: 8px;
+	}
+	
+	.setting-item .setting-item-control {
+		flex-direction: column;
+		align-items: stretch;
+	}
+}
+/*
+ Enhanced Preview Pane Improvements */
+
+/* Larger, better-aligned preview with improved controls */
+.html-css-editor-preview-enhanced {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    background: var(--background-primary);
+    border-radius: var(--html-css-editor-border-radius);
+    overflow: hidden;
+    box-shadow: var(--html-css-editor-shadow);
+    min-height: 500px; /* Ensure larger minimum height */
+    flex: 1; /* Take all available space */
+}
+
+/* Enhanced preview toolbar with modern controls */
+.html-css-editor-preview-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    background: linear-gradient(135deg, 
+        var(--background-secondary) 0%, 
+        var(--background-secondary-alt, var(--background-secondary)) 100%);
+    border-bottom: 2px solid var(--interactive-accent);
+    min-height: 44px;
+    gap: 10px;
+    flex-wrap: wrap;
+    position: relative;
+    z-index: 10;
+    backdrop-filter: blur(8px);
+}
+
+/* Removed decorative horizontal line from preview toolbar */
+
+.html-css-editor-preview-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-normal);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.html-css-editor-preview-title::before {
+    content: '';
+    font-size: 14px;
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
+}
+
+.html-css-editor-preview-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.html-css-editor-preview-btn {
+    padding: 8px 14px;
+    border: 1px solid var(--background-modifier-border);
+    border-radius: 6px;
+    background: var(--background-primary);
+    color: var(--text-normal);
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 32px;
+    white-space: nowrap;
+    position: relative;
+    overflow: hidden;
+}
+
+.html-css-editor-preview-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, 
+        transparent, 
+        rgba(255, 255, 255, 0.2), 
+        transparent);
+    transition: left 0.5s ease;
+}
+
+.html-css-editor-preview-btn:hover::before {
+    left: 100%;
+}
+
+.html-css-editor-preview-btn:hover {
+    background: var(--background-modifier-hover);
+    border-color: var(--interactive-accent);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.html-css-editor-preview-btn:active {
+    background: var(--background-modifier-active);
+    transform: translateY(0);
+}
+
+.html-css-editor-preview-btn.active {
+    background: linear-gradient(135deg, 
+        var(--interactive-accent) 0%, 
+        var(--interactive-accent-hover) 100%);
+    color: var(--text-on-accent);
+    border-color: var(--interactive-accent);
+    box-shadow: 0 2px 8px rgba(var(--interactive-accent-rgb, 66, 165, 245), 0.3);
+}
+
+/* Zoom controls */
+.html-css-editor-zoom-controls {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    border: 1px solid var(--background-modifier-border);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.html-css-editor-zoom-btn {
+    padding: 4px 6px;
+    border: none;
+    background: var(--background-primary);
+    color: var(--text-normal);
+    font-size: 11px;
+    cursor: pointer;
+    transition: var(--html-css-editor-transition);
+    min-width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.html-css-editor-zoom-btn:hover {
+    background: var(--background-modifier-hover);
+}
+
+.html-css-editor-zoom-level {
+    padding: 4px 8px;
+    background: var(--background-secondary);
+    color: var(--text-muted);
+    font-size: 10px;
+    font-weight: 600;
+    min-width: 40px;
+    text-align: center;
+    border-left: 1px solid var(--background-modifier-border);
+    border-right: 1px solid var(--background-modifier-border);
+}
+
+/* Enhanced preview frame with zoom support */
+.html-css-editor-preview-frame-container {
+    flex: 1;
+    position: relative;
+    overflow: auto;
+    background: var(--background-primary-alt, #ffffff);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 300px;
+}
+
+.html-css-editor-preview-frame-wrapper {
+    position: relative;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-origin: center center;
+    width: 100%;
+    height: 100%;
+    min-height: 300px;
+}
+
+.html-css-editor-preview-frame-enhanced {
+    width: 100%;
+    height: 100%;
+    border: none;
+    background: var(--background-primary-alt, #ffffff);
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: var(--html-css-editor-transition);
+}
+
+/* Picture-in-Picture (Floating) Preview - Enhanced */
+.html-css-editor-pip-container {
+    position: fixed !important;
+    top: 100px;
+    right: 20px;
+    width: 500px;
+    height: 400px;
+    background: var(--background-primary);
+    border: 2px solid var(--interactive-accent);
+    border-radius: calc(var(--html-css-editor-border-radius) + 2px);
+    box-shadow: 0 16px 64px rgba(0, 0, 0, 0.25), 
+                0 8px 32px rgba(var(--interactive-accent-rgb, 66, 165, 245), 0.15);
+    z-index: 9999 !important;
+    display: flex !important;
+    flex-direction: column;
+    overflow: hidden;
+    min-width: 250px;
+    min-height: 200px;
+    max-width: 90vw;
+    max-height: 90vh;
+    backdrop-filter: blur(16px) saturate(1.2);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: default;
+    visibility: visible !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+}
+
+.html-css-editor-pip-container.dragging {
+    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.35), 
+                0 12px 40px rgba(var(--interactive-accent-rgb, 66, 165, 245), 0.25);
+    border-color: var(--interactive-accent-hover);
+    z-index: 10000;
+    will-change: transform;
+}
+
+.html-css-editor-pip-container.resizing {
+    transition: none;
+    border-color: var(--interactive-accent-hover);
+    box-shadow: 0 20px 72px rgba(0, 0, 0, 0.3), 
+                0 10px 36px rgba(var(--interactive-accent-rgb, 66, 165, 245), 0.2);
+}
+
+.html-css-editor-pip-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    background: linear-gradient(135deg, 
+        var(--background-secondary) 0%, 
+        var(--background-secondary-alt, var(--background-secondary)) 100%);
+    border-bottom: 1px solid var(--interactive-accent);
+    cursor: grab;
+    user-select: none;
+    min-height: 40px;
+    position: relative;
+    backdrop-filter: blur(8px);
+}
+
+.html-css-editor-pip-header:active {
+    cursor: grabbing;
+}
+
+.html-css-editor-pip-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, 
+        var(--interactive-accent) 0%, 
+        var(--interactive-accent-hover) 50%, 
+        var(--interactive-accent) 100%);
+}
+
+.html-css-editor-pip-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-normal);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.html-css-editor-pip-title::before {
+    content: '🎯';
+    font-size: 14px;
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
+}
+
+.html-css-editor-pip-controls {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.html-css-editor-pip-btn {
+    width: 20px;
+    height: 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: bold;
+    position: relative;
+    overflow: hidden;
+}
+
+.html-css-editor-pip-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, 
+        transparent, 
+        rgba(255, 255, 255, 0.3), 
+        transparent);
+    transition: left 0.5s ease;
+}
+
+.html-css-editor-pip-btn:hover::before {
+    left: 100%;
+}
+
+.html-css-editor-pip-btn.minimize {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    color: white;
+    box-shadow: 0 2px 4px rgba(245, 158, 11, 0.3);
+}
+
+.html-css-editor-pip-btn.maximize {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);
+}
+
+.html-css-editor-pip-btn.close {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    color: white;
+    box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);
+}
+
+.html-css-editor-pip-btn:hover {
+    transform: translateY(-1px) scale(1.05);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.html-css-editor-pip-btn:active {
+    transform: translateY(0) scale(0.95);
+}
+
+.html-css-editor-pip-content {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+}
+
+.html-css-editor-pip-frame {
+    width: 100%;
+    height: 100%;
+    border: none;
+    background: var(--background-primary-alt, #ffffff);
+    border-radius: 0 0 calc(var(--html-css-editor-border-radius) + 1px) calc(var(--html-css-editor-border-radius) + 1px);
+}
+
+/* Enhanced Resize Handles for PiP */
+.pip-resize-handle {
+    position: absolute;
+    background: transparent;
+    transition: background-color 0.2s ease;
+    z-index: 10;
+}
+
+.pip-resize-handle:hover {
+    background: rgba(var(--interactive-accent-rgb, 66, 165, 245), 0.3);
+}
+
+.pip-resize-handle:active {
+    background: rgba(var(--interactive-accent-rgb, 66, 165, 245), 0.5);
+}
+
+/* Corner handles - larger and more visible */
+.pip-resize-nw, .pip-resize-ne, .pip-resize-sw, .pip-resize-se {
+    border-radius: 50%;
+    background: var(--interactive-accent);
+    opacity: 0;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.html-css-editor-pip-container:hover .pip-resize-nw,
+.html-css-editor-pip-container:hover .pip-resize-ne,
+.html-css-editor-pip-container:hover .pip-resize-sw,
+.html-css-editor-pip-container:hover .pip-resize-se {
+    opacity: 0.8;
+}
+
+.pip-resize-nw:hover, .pip-resize-ne:hover, 
+.pip-resize-sw:hover, .pip-resize-se:hover {
+    opacity: 1;
+    transform: scale(1.2);
+    background: var(--interactive-accent-hover);
+}
+
+/* Side handles - subtle but functional */
+.pip-resize-n, .pip-resize-s, .pip-resize-w, .pip-resize-e {
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.html-css-editor-pip-container:hover .pip-resize-n,
+.html-css-editor-pip-container:hover .pip-resize-s,
+.html-css-editor-pip-container:hover .pip-resize-w,
+.html-css-editor-pip-container:hover .pip-resize-e {
+    opacity: 0.6;
+}
+
+.pip-resize-n:hover, .pip-resize-s:hover, 
+.pip-resize-w:hover, .pip-resize-e:hover {
+    opacity: 1;
+    background: rgba(var(--interactive-accent-rgb, 66, 165, 245), 0.4);
+}
+
+/* Fullscreen preview mode */
+.html-css-editor-fullscreen-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.9);
+    z-index: 2000;
+    display: flex;
+    flex-direction: column;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.html-css-editor-fullscreen-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.html-css-editor-fullscreen-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 24px;
+    background: #1e1e1e !important;
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--background-modifier-border);
+}
+
+.theme-light .html-css-editor-fullscreen-header {
+    background: #ffffff !important;
+}
+
+.theme-dark .html-css-editor-fullscreen-header {
+    background: #1e1e1e !important;
+}
+
+.html-css-editor-fullscreen-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-normal);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.html-css-editor-fullscreen-title::before {
+    content: '';
+    font-size: 16px;
+}
+
+.html-css-editor-fullscreen-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.html-css-editor-fullscreen-btn {
+    padding: 8px 16px;
+    border: 1px solid var(--background-modifier-border);
+    border-radius: 6px;
+    background: var(--background-primary);
+    color: var(--text-normal);
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--html-css-editor-transition);
+}
+
+.html-css-editor-fullscreen-btn:hover {
+    background: var(--background-modifier-hover);
+    border-color: var(--interactive-accent);
+}
+
+.html-css-editor-fullscreen-btn.close {
+    background: var(--html-css-editor-error);
+    color: white;
+    border-color: var(--html-css-editor-error);
+}
+
+.html-css-editor-fullscreen-content {
+    flex: 1;
+    padding: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.html-css-editor-fullscreen-frame {
+    width: 100%;
+    height: 100%;
+    max-width: 1200px;
+    max-height: 800px;
+    border: none;
+    background: var(--background-primary-alt, #ffffff);
+    border-radius: 8px;
+    box-shadow: 0 16px 64px rgba(0, 0, 0, 0.3);
+}
+
+/* Responsive design testing controls */
+.html-css-editor-responsive-controls {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px;
+    background: var(--background-secondary);
+    border-radius: 4px;
+}
+
+.html-css-editor-device-btn {
+    padding: 4px 8px;
+    border: none;
+    border-radius: 3px;
+    background: transparent;
+    color: var(--text-muted);
+    font-size: 10px;
+    cursor: pointer;
+    transition: var(--html-css-editor-transition);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.html-css-editor-device-btn:hover {
+    background: var(--background-modifier-hover);
+    color: var(--text-normal);
+}
+
+.html-css-editor-device-btn.active {
+    background: var(--interactive-accent);
+    color: var(--text-on-accent);
+}
+
+/* Device preset styles */
+.html-css-editor-preview-frame-wrapper.mobile {
+    width: 375px;
+    height: 667px;
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.html-css-editor-preview-frame-wrapper.tablet {
+    width: 768px;
+    height: 1024px;
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.html-css-editor-preview-frame-wrapper.desktop {
+    width: 1200px;
+    height: 800px;
+    max-width: 100%;
+    max-height: 100%;
+}
+
+/* Zoom level styles */
+.html-css-editor-preview-frame-wrapper.zoom-50 {
+    transform: scale(0.5);
+}
+
+.html-css-editor-preview-frame-wrapper.zoom-75 {
+    transform: scale(0.75);
+}
+
+.html-css-editor-preview-frame-wrapper.zoom-100 {
+    transform: scale(1);
+}
+
+.html-css-editor-preview-frame-wrapper.zoom-125 {
+    transform: scale(1.25);
+}
+
+.html-css-editor-preview-frame-wrapper.zoom-150 {
+    transform: scale(1.5);
+}
+
+.html-css-editor-preview-frame-wrapper.zoom-200 {
+    transform: scale(2);
+}
+
+/* Enhanced preview loading states */
+.html-css-editor-preview-loading {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--background-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 12px;
+    z-index: 10;
+}
+
+.html-css-editor-preview-spinner {
+    width: 32px;
+    height: 32px;
+    border: 3px solid var(--background-modifier-border);
+    border-top: 3px solid var(--interactive-accent);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.html-css-editor-preview-loading-text {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+/* Enhanced error states for preview */
+.html-css-editor-preview-error {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--background-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 16px;
+    padding: 24px;
+    text-align: center;
+}
+
+.html-css-editor-preview-error-icon {
+    font-size: 48px;
+    opacity: 0.5;
+}
+
+.html-css-editor-preview-error-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-normal);
+    margin-bottom: 8px;
+}
+
+.html-css-editor-preview-error-message {
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.4;
+    max-width: 300px;
+}
+
+.html-css-editor-preview-error-retry {
+    padding: 8px 16px;
+    border: 1px solid var(--interactive-accent);
+    border-radius: 4px;
+    background: var(--interactive-accent);
+    color: var(--text-on-accent);
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--html-css-editor-transition);
+    margin-top: 8px;
+}
+
+.html-css-editor-preview-error-retry:hover {
+    background: var(--interactive-accent-hover);
+    border-color: var(--interactive-accent-hover);
+}
+
+/* Enhanced mobile responsiveness for new features */
+@media (max-width: 768px) {
+    .html-css-editor-pip-container {
+        width: 320px;
+        height: 240px;
+        right: 10px;
+        top: 80px;
+        border-width: 1px;
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+    }
+    
+    .html-css-editor-pip-header {
+        padding: 8px 12px;
+        min-height: 36px;
+    }
+    
+    .html-css-editor-pip-btn {
+        width: 18px;
+        height: 18px;
+        font-size: 9px;
+    }
+    
+    .pip-resize-handle {
+        opacity: 0.8 !important;
+    }
+    
+    .pip-resize-nw, .pip-resize-ne, .pip-resize-sw, .pip-resize-se {
+        width: 16px !important;
+        height: 16px !important;
+        opacity: 1 !important;
+    }
+    
+    .html-css-editor-preview-controls {
+        flex-wrap: wrap;
+        gap: 4px;
+    }
+    
+    .html-css-editor-zoom-controls {
+        order: -1;
+        width: 100%;
+        justify-content: center;
+        margin-bottom: 6px;
+    }
+    
+    .html-css-editor-responsive-controls {
+        display: none; /* Hide on mobile to save space */
+    }
+}
+
+@media (max-width: 480px) {
+    .html-css-editor-pip-container {
+        width: calc(100vw - 20px);
+        height: 240px;
+        right: 10px;
+        left: 10px;
+        top: 60px;
+        min-width: 280px;
+        min-height: 200px;
+    }
+    
+    .html-css-editor-fullscreen-header {
+        padding: 12px 16px;
+    }
+    
+    .html-css-editor-fullscreen-content {
+        padding: 16px;
+    }
+    
+    .html-css-editor-preview-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+        padding: 8px;
+    }
+    
+    .html-css-editor-preview-controls {
+        justify-content: center;
+    }
+}
+
+/* Accessibility improvements for new features */
+.html-css-editor-preview-btn:focus,
+.html-css-editor-zoom-btn:focus,
+.html-css-editor-pip-btn:focus,
+.html-css-editor-fullscreen-btn:focus,
+.html-css-editor-device-btn:focus {
+    outline: 2px solid var(--interactive-accent);
+    outline-offset: 2px;
+}
+
+/* Keyboard navigation indicators */
+.html-css-editor-pip-container:focus-within {
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2), 0 0 0 2px var(--interactive-accent);
+}
+
+/* High contrast mode support for new features */
+@media (prefers-contrast: high) {
+    .html-css-editor-pip-btn {
+        border: 2px solid currentColor;
+    }
+    
+    .html-css-editor-preview-btn,
+    .html-css-editor-zoom-btn,
+    .html-css-editor-fullscreen-btn {
+        border-width: 2px;
+        font-weight: 700;
+    }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    .html-css-editor-preview-frame-wrapper,
+    .html-css-editor-pip-container,
+    .html-css-editor-fullscreen-overlay,
+    .html-css-editor-preview-spinner {
+        transition: none;
+        animation: none;
+    }
+    
+    .html-css-editor-pip-container.dragging {
+        transform: none;
+    }
+}
+
+/* Dark theme specific adjustments for new features */
+.theme-dark .html-css-editor-pip-container {
+    backdrop-filter: blur(12px);
+    background: rgba(var(--background-primary-rgb, 30, 30, 30), 0.95);
+}
+
+.theme-dark .html-css-editor-fullscreen-overlay {
+    background: rgba(0, 0, 0, 0.95);
+}
+
+.theme-dark .html-css-editor-preview-frame-enhanced,
+.theme-dark .html-css-editor-pip-frame,
+.theme-dark .html-css-editor-fullscreen-frame {
+    background: #1e1e1e;
+}
+
+/* 
+Color Picker Styles */
+.cm-color-swatch {
+	display: inline-block;
+	width: 14px;
+	height: 14px;
+	border-radius: 3px;
+	border: 1px solid rgba(0, 0, 0, 0.2);
+	margin: 0 4px;
+	vertical-align: middle;
+	cursor: pointer;
+	transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.cm-color-swatch:hover {
+	transform: scale(1.2);
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.cm-color-picker-overlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: rgba(0, 0, 0, 0.5);
+	z-index: 10000;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	animation: fadeIn 0.15s ease;
+}
+
+@keyframes fadeIn {
+	from { opacity: 0; }
+	to { opacity: 1; }
+}
+
+.cm-color-picker {
+	background: var(--background-primary);
+	border: 1px solid var(--background-modifier-border);
+	border-radius: 8px;
+	padding: 20px;
+	box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+	min-width: 300px;
+	animation: slideUp 0.2s ease;
+}
+
+@keyframes slideUp {
+	from {
+		opacity: 0;
+		transform: translateY(20px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+/* Enhanced Device Controls */
+.html-css-editor-device-select {
+	padding: 6px 12px;
+	border: 1px solid var(--background-modifier-border);
+	border-radius: 6px;
+	background: var(--background-primary);
+	color: var(--text-normal);
+	font-size: 13px;
+	cursor: pointer;
+	transition: all 0.2s ease;
+	font-family: var(--font-interface);
+	max-width: 280px;
+}
+
+.html-css-editor-device-select:hover {
+	background: var(--background-modifier-hover);
+	border-color: var(--interactive-accent);
+}
+
+.html-css-editor-device-select:focus {
+	outline: none;
+	border-color: var(--interactive-accent);
+	box-shadow: 0 0 0 2px var(--interactive-accent-hover);
+}
+
+.html-css-editor-device-btn.rotate-btn {
+	padding: 6px 12px;
+	font-size: 16px;
+	min-width: 40px;
+}
+
+.html-css-editor-responsive-controls {
+	display: flex;
+	gap: 8px;
+	align-items: center;
+}
+
+/* Custom Size Modal Enhancements */
+.modal .setting-item-description {
+	color: var(--text-muted);
+	font-size: 12px;
+	margin-top: 8px;
+}
+
+/* Device Preview Frame Enhancements */
+.html-css-editor-preview-frame-wrapper {
+	transition: width 0.3s ease, height 0.3s ease;
+	margin: 0 auto;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+	border-radius: 8px;
+	overflow: hidden;
+}
+
+.html-css-editor-preview-frame-wrapper.mobile,
+.html-css-editor-preview-frame-wrapper.tablet,
+.html-css-editor-preview-frame-wrapper.custom {
+	border: 2px solid var(--background-modifier-border);
+}
+
+/* Responsive indicator badge */
+.html-css-editor-preview-toolbar::after {
+	content: attr(data-device-info);
+	position: absolute;
+	right: 10px;
+	top: 50%;
+	transform: translateY(-50%);
+	font-size: 11px;
+	color: var(--text-muted);
+	background: var(--background-secondary);
+	padding: 4px 8px;
+	border-radius: 4px;
+	pointer-events: none;
+}
+
+/* Animation System Styles */
+
+/* Animation Timeline Widget */
+.cm-animation-timeline {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	padding: 4px 8px;
+	background: var(--background-secondary);
+	border: 1px solid var(--background-modifier-border);
+	border-radius: 4px;
+	margin: 0 4px;
+	font-size: 11px;
+	color: var(--text-muted);
+	animation: fadeInTimeline 0.3s ease;
+}
+
+@keyframes fadeInTimeline {
+	from { opacity: 0; transform: translateY(-5px); }
+	to { opacity: 1; transform: translateY(0); }
+}
+
+.cm-animation-timeline button {
+	background: none;
+	border: none;
+	cursor: pointer;
+	font-size: 12px;
+	padding: 2px;
+	border-radius: 2px;
+	transition: background 0.2s ease;
+}
+
+.cm-animation-timeline button:hover {
+	background: var(--background-modifier-hover);
+}
+
+.cm-animation-timeline input[type="range"] {
+	width: 80px;
+	height: 4px;
+	cursor: pointer;
+	background: var(--background-modifier-border);
+	border-radius: 2px;
+	outline: none;
+	-webkit-appearance: none;
+}
+
+.cm-animation-timeline input[type="range"]::-webkit-slider-thumb {
+	-webkit-appearance: none;
+	width: 12px;
+	height: 12px;
+	border-radius: 50%;
+	background: var(--interactive-accent);
+	cursor: pointer;
+}
+
+.cm-animation-timeline input[type="range"]::-moz-range-thumb {
+	width: 12px;
+	height: 12px;
+	border-radius: 50%;
+	background: var(--interactive-accent);
+	cursor: pointer;
+	border: none;
+}
+
+/* Animation Toolbar Buttons */
+.html-css-editor-toolbar-btn.animation-presets-btn,
+.html-css-editor-toolbar-btn.animation-builder-btn,
+.html-css-editor-toolbar-btn.animation-inspector-btn {
+	background: linear-gradient(135deg, var(--interactive-accent), var(--interactive-accent-hover));
+	color: var(--text-on-accent);
+	border: none;
+	font-weight: 500;
+}
+
+.html-css-editor-toolbar-btn.animation-presets-btn:hover,
+.html-css-editor-toolbar-btn.animation-builder-btn:hover,
+.html-css-editor-toolbar-btn.animation-inspector-btn:hover {
+	background: linear-gradient(135deg, var(--interactive-accent-hover), var(--interactive-accent));
+	transform: translateY(-1px);
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Animation Presets Modal */
+.animation-preset-item {
+	padding: 12px;
+	border-radius: 6px;
+	transition: all 0.2s ease;
+}
+
+.animation-preset-item:hover {
+	background: var(--background-modifier-hover);
+	transform: translateY(-1px);
+}
+
+.animation-preset-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 8px;
+}
+
+.animation-preset-name {
+	font-weight: 600;
+	color: var(--text-normal);
+}
+
+.animation-preset-category {
+	font-size: 10px;
+	padding: 3px 8px;
+	border-radius: 12px;
+	font-weight: 500;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+}
+
+.category-entrance {
+	background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+	color: #1976d2;
+}
+
+.category-attention {
+	background: linear-gradient(135deg, #fff3e0, #ffcc02);
+	color: #f57c00;
+}
+
+.category-loading {
+	background: linear-gradient(135deg, #f3e5f5, #e1bee7);
+	color: #7b1fa2;
+}
+
+.category-hover {
+	background: linear-gradient(135deg, #e8f5e8, #c8e6c9);
+	color: #388e3c;
+}
+
+.animation-preset-preview {
+	display: flex;
+	justify-content: center;
+	margin: 8px 0;
+}
+
+.animation-preview-box {
+	width: 32px;
+	height: 32px;
+	background: var(--interactive-accent);
+	border-radius: 6px;
+	transition: all 0.3s ease;
+}
+
+.animation-preset-usage {
+	margin-top: 8px;
+}
+
+.animation-usage-code {
+	font-size: 11px;
+	background: var(--background-modifier-border);
+	padding: 4px 6px;
+	border-radius: 3px;
+	font-family: var(--font-monospace);
+	color: var(--text-muted);
+	display: block;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+/* Animation Builder Modal */
+.animation-builder-modal {
+	max-width: 900px;
+	max-height: 85vh;
+	overflow-y: auto;
+}
+
+.animation-settings,
+.keyframes-editor,
+.animation-preview-section {
+	margin-bottom: 24px;
+	padding: 20px;
+	border: 1px solid var(--background-modifier-border);
+	border-radius: 8px;
+	background: var(--background-primary);
+}
+
+.animation-settings h3,
+.keyframes-editor h3,
+.animation-preview-section h3 {
+	margin: 0 0 16px 0;
+	color: var(--text-normal);
+	font-size: 16px;
+	font-weight: 600;
+}
+
+.keyframes-container {
+	max-height: 300px;
+	overflow-y: auto;
+	padding: 8px;
+	background: var(--background-secondary);
+	border-radius: 6px;
+	margin-bottom: 12px;
+}
+
+.keyframe-item {
+	display: flex;
+	align-items: center;
+	margin-bottom: 12px;
+	padding: 12px;
+	background: var(--background-primary);
+	border-radius: 6px;
+	border: 1px solid var(--background-modifier-border);
+	transition: all 0.2s ease;
+}
+
+.keyframe-item:hover {
+	border-color: var(--interactive-accent);
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.keyframe-item input[type="number"] {
+	width: 70px;
+	padding: 6px 8px;
+	border: 1px solid var(--background-modifier-border);
+	border-radius: 4px;
+	background: var(--background-primary);
+	color: var(--text-normal);
+	margin-right: 12px;
+}
+
+.keyframe-item input[type="text"] {
+	flex: 1;
+	padding: 6px 8px;
+	border: 1px solid var(--background-modifier-border);
+	border-radius: 4px;
+	background: var(--background-primary);
+	color: var(--text-normal);
+	margin: 0 12px;
+	font-family: var(--font-monospace);
+}
+
+.keyframe-syntax {
+	color: var(--text-muted);
+	font-family: var(--font-monospace);
+	font-weight: 500;
+}
+
+.keyframe-delete {
+	background: none;
+	border: none;
+	cursor: pointer;
+	font-size: 18px;
+	font-weight: bold;
+	color: var(--text-error);
+	padding: 4px 8px;
+	border-radius: 4px;
+	transition: all 0.2s ease;
+}
+
+.keyframe-delete:hover {
+	background: var(--background-modifier-error);
+	transform: scale(1.1);
+}
+
+.animation-preview-container {
+	width: 100%;
+	height: 120px;
+	border: 2px dashed var(--background-modifier-border);
+	border-radius: 8px;
+	position: relative;
+	background: var(--background-secondary);
+	overflow: hidden;
+	margin-bottom: 16px;
+}
+
+.animation-preview-element {
+	width: 40px;
+	height: 40px;
+	background: var(--interactive-accent);
+	border-radius: 6px;
+	position: absolute;
+	top: 40px;
+	left: 20px;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.animation-controls {
+	display: flex;
+	gap: 12px;
+	margin-top: 12px;
+}
+
+.animation-controls button {
+	padding: 8px 16px;
+	border: 1px solid var(--background-modifier-border);
+	border-radius: 6px;
+	background: var(--background-primary);
+	color: var(--text-normal);
+	cursor: pointer;
+	font-size: 13px;
+	transition: all 0.2s ease;
+}
+
+.animation-controls button:hover {
+	background: var(--background-modifier-hover);
+	border-color: var(--interactive-accent);
+}
+
+.animation-controls button.mod-cta {
+	background: var(--interactive-accent);
+	color: var(--text-on-accent);
+	border-color: var(--interactive-accent);
+}
+
+.animation-builder-buttons {
+	display: flex;
+	gap: 12px;
+	justify-content: flex-end;
+	margin-top: 24px;
+	padding-top: 20px;
+	border-top: 1px solid var(--background-modifier-border);
+}
+
+/* Animation Inspector Modal */
+.animation-performance-table {
+	width: 100%;
+	border-collapse: collapse;
+	margin-top: 16px;
+	background: var(--background-primary);
+	border-radius: 8px;
+	overflow: hidden;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.animation-performance-table th,
+.animation-performance-table td {
+	padding: 12px 16px;
+	text-align: left;
+	border-bottom: 1px solid var(--background-modifier-border);
+}
+
+.animation-performance-table th {
+	background: var(--background-secondary);
+	font-weight: 600;
+	color: var(--text-normal);
+	font-size: 13px;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+}
+
+.animation-performance-table td {
+	font-size: 14px;
+	color: var(--text-normal);
+}
+
+.animation-performance-table tr:hover {
+	background: var(--background-modifier-hover);
+}
+
+.status-good {
+	color: var(--text-success);
+	font-weight: 500;
+}
+
+.status-warning {
+	color: var(--text-warning);
+	font-weight: 500;
+}
+
+.status-error {
+	color: var(--text-error);
+	font-weight: 500;
+}
+
+/* Animation Preview Animations */
+.preview-fadeIn {
+	animation: preview-fadeIn 2s ease-in-out infinite;
+}
+
+.preview-slideInUp {
+	animation: preview-slideInUp 2s ease-in-out infinite;
+}
+
+.preview-bounce {
+	animation: preview-bounce 2s ease-in-out infinite;
+}
+
+.preview-spin {
+	animation: preview-spin 2s linear infinite;
+}
+
+.preview-pulse {
+	animation: preview-pulse 2s ease-in-out infinite;
+}
+
+.preview-shake {
+	animation: preview-shake 2s ease-in-out infinite;
+}
+
+.preview-zoomIn {
+	animation: preview-zoomIn 2s ease-in-out infinite;
+}
+
+@keyframes preview-fadeIn {
+	0%, 100% { opacity: 0.3; }
+	50% { opacity: 1; }
+}
+
+@keyframes preview-slideInUp {
+	0%, 100% { transform: translateY(10px); opacity: 0.3; }
+	50% { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes preview-bounce {
+	0%, 100% { transform: translateY(0); }
+	50% { transform: translateY(-15px); }
+}
+
+@keyframes preview-spin {
+	from { transform: rotate(0deg); }
+	to { transform: rotate(360deg); }
+}
+
+@keyframes preview-pulse {
+	0%, 100% { transform: scale(1); }
+	50% { transform: scale(1.15); }
+}
+
+@keyframes preview-shake {
+	0%, 100% { transform: translateX(0); }
+	25% { transform: translateX(-8px); }
+	75% { transform: translateX(8px); }
+}
+
+@keyframes preview-zoomIn {
+	0%, 100% { transform: scale(0.7); opacity: 0.3; }
+	50% { transform: scale(1); opacity: 1; }
+}
+
+/* Dark theme adjustments */
+.theme-dark .animation-preset-category.category-entrance {
+	background: linear-gradient(135deg, #1a237e, #3949ab);
+	color: #e3f2fd;
+}
+
+.theme-dark .animation-preset-category.category-attention {
+	background: linear-gradient(135deg, #e65100, #ff9800);
+	color: #fff3e0;
+}
+
+.theme-dark .animation-preset-category.category-loading {
+	background: linear-gradient(135deg, #4a148c, #9c27b0);
+	color: #f3e5f5;
+}
+
+.theme-dark .animation-preset-category.category-hover {
+	background: linear-gradient(135deg, #1b5e20, #4caf50);
+	color: #e8f5e8;
+}
+
+/* Mobile Responsive Styles */
+@media (max-width: 768px) {
+	/* Main container adjustments */
+	.html-css-editor-main-container {
+		font-size: 14px;
+	}
+	
+	/* Toolbar mobile optimizations */
+	.html-css-editor-toolbar {
+		padding: 8px 12px;
+		flex-direction: column;
+		gap: 8px;
+		align-items: stretch;
+	}
+	
+	.html-css-editor-toolbar-title {
+		font-size: 16px;
+		text-align: center;
+		margin-bottom: 4px;
+	}
+	
+	.html-css-editor-toolbar-actions {
+		flex-direction: column;
+		gap: 8px;
+		width: 100%;
+	}
+	
+	.html-css-editor-toolbar-section {
+		width: 100%;
+		justify-content: center;
+		flex-wrap: wrap;
+		gap: 6px;
+	}
+	
+	.html-css-editor-toolbar-btn {
+		flex: 1;
+		min-width: 80px;
+		max-width: none;
+		padding: 8px 12px;
+		font-size: 12px;
+		justify-content: center;
+	}
+	
+	/* Content layout for mobile */
+	.html-css-editor-content-container {
+		flex-direction: column;
+		height: calc(100vh - 120px);
+	}
+	
+	.html-css-editor-pane.editor-pane {
+		width: 100% !important;
+		height: 50% !important;
+		border-right: none;
+		border-bottom: 1px solid var(--background-modifier-border);
+	}
+	
+	.html-css-editor-pane.preview-pane {
+		width: 100% !important;
+		height: 50% !important;
+	}
+	
+	/* Editor sections mobile */
+	.html-css-editor-section {
+		margin-bottom: 12px;
+	}
+	
+	.html-css-editor-label {
+		padding: 8px 12px;
+		font-size: 13px;
+	}
+	
+	.html-css-editor-codemirror-container {
+		min-height: 120px;
+		max-height: 200px;
+	}
+	
+	/* Preview toolbar mobile */
+	.html-css-editor-preview-toolbar {
+		padding: 6px 8px;
+		flex-wrap: wrap;
+		gap: 6px;
+	}
+	
+	.html-css-editor-preview-title {
+		font-size: 13px;
+		width: 100%;
+		text-align: center;
+		margin-bottom: 4px;
+	}
+	
+	.html-css-editor-preview-controls {
+		width: 100%;
+		justify-content: center;
+		flex-wrap: wrap;
+		gap: 4px;
+	}
+	
+	.html-css-editor-preview-btn {
+		padding: 6px 10px;
+		font-size: 11px;
+		min-width: 60px;
+	}
+	
+	/* Device selector mobile */
+	.html-css-editor-device-select {
+		width: 100%;
+		max-width: none;
+		font-size: 12px;
+		padding: 8px 12px;
+	}
+	
+	/* Responsive controls mobile */
+	.html-css-editor-responsive-controls {
+		width: 100%;
+		justify-content: center;
+		flex-wrap: wrap;
+	}
+	
+	/* Hide resize handle on mobile */
+	.html-css-editor-resize-handle {
+		display: none;
+	}
+	
+	/* Zoom controls mobile */
+	.html-css-editor-zoom-controls {
+		flex-wrap: wrap;
+		justify-content: center;
+		gap: 4px;
+	}
+	
+	.html-css-editor-zoom-btn {
+		min-width: 40px;
+		padding: 6px 8px;
+		font-size: 11px;
+	}
+	
+	/* Preview frame mobile */
+	.html-css-editor-preview-frame-wrapper {
+		margin: 0 auto;
+		max-width: 100%;
+		max-height: 100%;
+		overflow: auto;
+	}
+	
+	/* Animation modals mobile */
+	.animation-builder-modal {
+		max-width: 95vw;
+		max-height: 90vh;
+		margin: 5vh auto;
+	}
+	
+	.animation-settings,
+	.keyframes-editor,
+	.animation-preview-section {
+		padding: 12px;
+		margin-bottom: 16px;
+	}
+	
+	.keyframe-item {
+		flex-direction: column;
+		gap: 8px;
+		align-items: stretch;
+	}
+	
+	.keyframe-item input[type="number"] {
+		width: 100%;
+		margin-right: 0;
+		margin-bottom: 4px;
+	}
+	
+	.keyframe-item input[type="text"] {
+		margin: 0;
+		width: 100%;
+	}
+	
+	.animation-controls {
+		flex-wrap: wrap;
+		justify-content: center;
+	}
+	
+	.animation-builder-buttons {
+		flex-direction: column;
+		gap: 8px;
+	}
+	
+	.animation-builder-buttons button {
+		width: 100%;
+		padding: 12px;
+	}
+	
+	/* Animation presets mobile */
+	.animation-preset-item {
+		padding: 8px;
+	}
+	
+	.animation-preset-header {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 4px;
+	}
+	
+	.animation-preset-preview {
+		margin: 6px 0;
+	}
+	
+	.animation-usage-code {
+		font-size: 10px;
+		word-break: break-all;
+	}
+	
+	/* Color picker mobile */
+	.cm-color-picker {
+		min-width: 280px;
+		max-width: 90vw;
+		margin: 0 5vw;
+	}
+	
+	.cm-color-picker input[type="color"] {
+		height: 60px;
+	}
+	
+	.cm-color-picker input[type="text"] {
+		font-size: 14px;
+		padding: 10px;
+	}
+	
+	/* PiP mobile adjustments */
+	.html-css-editor-pip-container {
+		width: 90vw !important;
+		height: 60vh !important;
+		left: 5vw !important;
+		top: 20vh !important;
+		max-width: none !important;
+		max-height: none !important;
+	}
+	
+	.html-css-editor-pip-header {
+		padding: 8px 12px;
+	}
+	
+	.html-css-editor-pip-title {
+		font-size: 14px;
+	}
+	
+	/* Settings mobile */
+	.setting-item {
+		flex-direction: column;
+		align-items: stretch;
+		gap: 8px;
+	}
+	
+	.setting-item-info {
+		margin-bottom: 8px;
+	}
+	
+	.setting-item-control {
+		width: 100%;
+	}
+	
+	/* Performance table mobile */
+	.animation-performance-table {
+		font-size: 12px;
+	}
+	
+	.animation-performance-table th,
+	.animation-performance-table td {
+		padding: 8px 6px;
+	}
+	
+	/* Compilation status mobile */
+	.html-css-editor-compilation-status {
+		font-size: 10px;
+		padding: 4px 6px;
+	}
+}
+
+/* Extra small mobile devices */
+@media (max-width: 480px) {
+	.html-css-editor-toolbar-btn {
+		font-size: 10px;
+		padding: 6px 8px;
+		min-width: 70px;
+	}
+	
+	.html-css-editor-codemirror-container {
+		min-height: 100px;
+		max-height: 150px;
+	}
+	
+	.html-css-editor-preview-frame-wrapper {
+		transform: scale(0.8);
+		transform-origin: top center;
+	}
+	
+	.animation-builder-modal {
+		max-width: 98vw;
+		margin: 1vh auto;
+	}
+	
+	.cm-color-picker {
+		min-width: 260px;
+	}
+}
+
+/* Landscape mobile orientation */
+@media (max-width: 768px) and (orientation: landscape) {
+	.html-css-editor-content-container {
+		flex-direction: row;
+	}
+	
+	.html-css-editor-pane.editor-pane {
+		width: 50% !important;
+		height: 100% !important;
+		border-right: 1px solid var(--background-modifier-border);
+		border-bottom: none;
+	}
+	
+	.html-css-editor-pane.preview-pane {
+		width: 50% !important;
+		height: 100% !important;
+	}
+	
+	.html-css-editor-toolbar {
+		flex-direction: row;
+		padding: 6px 8px;
+	}
+	
+	.html-css-editor-toolbar-actions {
+		flex-direction: row;
+		overflow-x: auto;
+	}
+	
+	.html-css-editor-toolbar-section {
+		flex-shrink: 0;
+	}
+}
+
+/* Touch-friendly improvements */
+@media (hover: none) and (pointer: coarse) {
+	.html-css-editor-toolbar-btn {
+		min-height: 44px;
+		padding: 8px 12px;
+	}
+	
+	.html-css-editor-preview-btn {
+		min-height: 44px;
+		padding: 8px 12px;
+	}
+	
+	.html-css-editor-device-btn {
+		min-height: 44px;
+		padding: 8px 12px;
+	}
+	
+	.cm-color-swatch {
+		width: 20px;
+		height: 20px;
+		margin: 0 6px;
+	}
+	
+	.animation-controls button {
+		min-height: 44px;
+		padding: 10px 16px;
+	}
+}
+/* 
+Enhanced PiP Styles */
+.html-css-editor-pip-container {
+	background: var(--background-primary);
+	border: 1px solid var(--background-modifier-border);
+	border-radius: 8px;
+	box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+}
+
+.html-css-editor-pip-header {
+	background: var(--background-secondary);
+	padding: 8px 12px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	border-bottom: 1px solid var(--background-modifier-border);
+	cursor: move;
+	user-select: none;
+}
+
+.html-css-editor-pip-title {
+	font-size: 12px;
+	font-weight: 500;
+	color: var(--text-normal);
+}
+
+.html-css-editor-pip-controls {
+	display: flex;
+	gap: 4px;
+}
+
+.html-css-editor-pip-btn {
+	background: none;
+	border: none;
+	color: var(--text-muted);
+	cursor: pointer;
+	padding: 4px 8px;
+	border-radius: 4px;
+	font-size: 14px;
+	transition: all 0.2s ease;
+}
+
+.html-css-editor-pip-btn:hover {
+	background: var(--background-modifier-hover);
+	color: var(--text-normal);
+}
+
+.html-css-editor-pip-btn.close:hover {
+	background: var(--background-modifier-error);
+	color: var(--text-on-accent);
+}
+
+.html-css-editor-pip-content {
+	flex: 1;
+	display: flex;
+	overflow: auto;
+	position: relative;
+	cursor: default;
+	align-items: center;
+	justify-content: center;
+	padding: 10px;
+}
+
+.html-css-editor-pip-frame {
+	width: 100%;
+	height: 100%;
+	border: none;
+	background: var(--background-primary);
+	transform-origin: top left;
+}
+
+/* PiP resize handle */
+.html-css-editor-pip-container::after {
+	content: '';
+	position: absolute;
+	bottom: 0;
+	right: 0;
+	width: 16px;
+	height: 16px;
+	background: linear-gradient(-45deg, transparent 30%, var(--text-muted) 30%, var(--text-muted) 40%, transparent 40%, transparent 60%, var(--text-muted) 60%, var(--text-muted) 70%, transparent 70%);
+	cursor: nw-resize;
+	pointer-events: none;
+}
+
+/* Device frame styling improvements */
+.html-css-editor-preview-frame-wrapper {
+	border-radius: 8px;
+	overflow: hidden;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+	background: var(--background-primary);
+	margin: 0 auto;
+	position: relative;
+}
+
+.html-css-editor-preview-frame-wrapper.mobile,
+.html-css-editor-preview-frame-wrapper.tablet {
+	border: 2px solid var(--background-modifier-border);
+}
+
+.html-css-editor-preview-frame-wrapper.mobile::before {
+	content: '';
+	position: absolute;
+	top: -2px;
+	left: 50%;
+	transform: translateX(-50%);
+	width: 60px;
+	height: 4px;
+	background: var(--background-modifier-border);
+	border-radius: 0 0 4px 4px;
+	z-index: 1;
+}
+
+/* Improved zoom scaling */
+.html-css-editor-preview-frame-enhanced {
+	width: 100%;
+	height: 100%;
+	border: none;
+	background: var(--background-primary);
+	transform-origin: top left;
+	transition: transform 0.3s ease;
+}
+
+/* Custom device size indicator */
+.html-css-editor-preview-toolbar[data-device="custom"]::after {
+	content: "Custom Size";
+	position: absolute;
+	right: 10px;
+	top: 50%;
+	transform: translateY(-50%);
+	font-size: 10px;
+	color: var(--text-muted);
+	background: var(--background-secondary);
+	padding: 2px 6px;
+	border-radius: 3px;
+}
+/* Pre
+view Pan/Drag Styles */
+.html-css-editor-preview-frame-container {
+	position: relative;
+	overflow: auto;
+	user-select: none;
+	cursor: default;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 20px;
+}
+
+.html-css-editor-preview-frame-container.panning {
+	cursor: grabbing !important;
+}
+
+/* Compact help button */
+.html-css-editor-help-btn {
+	padding: 4px 8px;
+	border: 1px solid var(--background-modifier-border);
+	border-radius: 50%;
+	background: var(--background-secondary);
+	color: var(--text-muted);
+	font-size: 12px;
+	font-weight: bold;
+	cursor: pointer;
+	transition: all 0.2s ease;
+	min-width: 24px;
+	height: 24px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.html-css-editor-help-btn:hover {
+	background: var(--background-modifier-hover);
+	color: var(--text-normal);
+	transform: scale(1.1);
+}
+
+.html-css-editor-help-btn.active {
+	background: var(--interactive-accent);
+	color: var(--text-on-accent);
+	border-color: var(--interactive-accent);
+	transform: scale(1.15);
+	box-shadow: 0 0 0 2px var(--interactive-accent-hover);
+}
+
+/* Pan overlay for capturing events over iframe */
+.html-css-editor-pan-overlay {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	z-index: 1000;
+	pointer-events: none;
+	background: transparent;
+}
+
+.html-css-editor-preview-frame-wrapper {
+	transition: transform 0.1s ease-out;
+	will-change: transform;
+}
+
+/* Cursor states for pan */
+.html-css-editor-preview-frame-container[data-pan-ready="true"] {
+	cursor: grab;
+}
+
+.html-css-editor-preview-frame-container[data-panning="true"] {
+	cursor: grabbing;
+}
+
+/* Smooth panning animation */
+@keyframes panHintPulse {
+	0%, 100% { opacity: 0.7; }
+	50% { opacity: 1; }
+}
+
+.html-css-editor-pan-hint.active {
+	animation: panHintPulse 2s ease-in-out infinite;
+}
+
+/* Rotate button enhancement */
+.html-css-editor-device-btn.rotate-btn {
+	position: relative;
+	overflow: visible;
+}
+
+.html-css-editor-device-btn.rotate-btn:active {
+	transform: rotate(90deg);
+	transition: transform 0.3s ease;
+}
+
+/* Device rotation animation */
+@keyframes rotateDevice {
+	0% { transform: rotate(0deg); }
+	100% { transform: rotate(90deg); }
+}
+
+.html-css-editor-preview-frame-wrapper.rotating {
+	animation: rotateDevice 0.3s ease;
+}

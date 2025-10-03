@@ -1,0 +1,213 @@
+import { Plugin, WorkspaceLeaf, Notice } from 'obsidian';
+import { HTMLCSSEditorView, VIEW_TYPE_HTML_CSS_EDITOR } from './HTMLCSSEditorView';
+import { HTMLCSSEditorSettings, HTMLCSSEditorSettingTab, DEFAULT_SETTINGS, SettingsValidator } from './settings';
+
+// Import styles
+import './styles.css';
+
+export default class HTMLCSSEditorPlugin extends Plugin {
+	settings: HTMLCSSEditorSettings;
+
+	async onload() {
+		try {
+			// Load settings
+			await this.loadSettings();
+
+			// Register the custom view type
+			this.registerView(
+				VIEW_TYPE_HTML_CSS_EDITOR,
+				(leaf) => new HTMLCSSEditorView(leaf, this)
+			);
+
+			// Add ribbon icon
+			this.addRibbonIcon('code', 'Open HTML/CSS Editor', () => {
+				this.activateView();
+			});
+
+			// Add command
+			this.addCommand({
+				id: 'open-html-css-editor',
+				name: 'Open HTML/CSS Editor',
+				callback: () => {
+					this.activateView();
+				}
+			});
+
+			// Add development command for testing settings (only in development)
+			if (process.env.NODE_ENV === 'development') {
+				this.addCommand({
+					id: 'test-html-css-editor-settings',
+					name: 'Test HTML/CSS Editor Settings',
+					callback: () => {
+						this.runSettingsTests();
+					}
+				});
+			}
+
+			// Add settings tab
+			this.addSettingTab(new HTMLCSSEditorSettingTab(this.app, this));
+
+			console.log('HTML/CSS Editor plugin loaded successfully');
+		} catch (error) {
+			this.handleError('Failed to load plugin', error);
+		}
+	}
+
+	onunload() {
+		try {
+			// Clean up any open views
+			this.app.workspace.detachLeavesOfType(VIEW_TYPE_HTML_CSS_EDITOR);
+			console.log('HTML/CSS Editor plugin unloaded successfully');
+		} catch (error) {
+			this.handleError('Error during plugin unload', error);
+		}
+	}
+
+	async loadSettings() {
+		try {
+			const loadedData = await this.loadData();
+			// Use migration system to handle version changes and validation
+			this.settings = SettingsValidator.migrateSettings(loadedData);
+			
+			// Save migrated settings if they were updated
+			if (!loadedData || loadedData.version !== this.settings.version) {
+				await this.saveSettings();
+				console.log('HTML/CSS Editor: Settings migrated and saved');
+			}
+		} catch (error) {
+			this.handleError('Failed to load settings', error);
+			this.settings = { ...DEFAULT_SETTINGS };
+			// Try to save default settings
+			try {
+				await this.saveSettings();
+			} catch (saveError) {
+				console.error('Failed to save default settings:', saveError);
+			}
+		}
+	}
+
+	async saveSettings() {
+		try {
+			// Validate settings before saving
+			this.settings = SettingsValidator.validateSettings(this.settings);
+			
+			// Update timestamp
+			this.settings.lastUpdated = new Date().toISOString();
+			
+			await this.saveData(this.settings);
+		} catch (error) {
+			this.handleError('Failed to save settings', error);
+		}
+	}
+
+	onSettingsChanged() {
+		// Notify all open editor views about settings changes
+		try {
+			const leaves = this.app.workspace.getLeavesOfType(VIEW_TYPE_HTML_CSS_EDITOR);
+			leaves.forEach(leaf => {
+				const view = leaf.view as HTMLCSSEditorView;
+				if (view && typeof view.onSettingsChanged === 'function') {
+					view.onSettingsChanged();
+				}
+			});
+		} catch (error) {
+			this.handleError('Failed to notify views of settings change', error);
+		}
+	}
+
+	// Method to test settings persistence (for development/debugging)
+	async testSettingsPersistence(): Promise<boolean> {
+		try {
+			// Save current settings
+			const originalSettings = { ...this.settings };
+			
+			// Modify a setting
+			const testValue = Math.random();
+			this.settings.editorRatio = testValue;
+			await this.saveSettings();
+			
+			// Reload settings
+			await this.loadSettings();
+			
+			// Check if the change persisted
+			const persisted = Math.abs(this.settings.editorRatio - testValue) < 0.001;
+			
+			// Restore original settings
+			this.settings = originalSettings;
+			await this.saveSettings();
+			
+			return persisted;
+		} catch (error) {
+			this.handleError('Settings persistence test failed', error);
+			return false;
+		}
+	}
+
+	// Run comprehensive settings tests (for development)
+	async runSettingsTests(): Promise<void> {
+		try {
+			console.log('HTML/CSS Editor: Running settings tests...');
+			
+			// Import test classes dynamically to avoid including in production
+			const { SettingsTestSuite } = await import('./settings-test');
+			const { SettingsIntegrationTest } = await import('./settings-integration-test');
+			
+			// Run unit tests
+			const unitTestsPassed = SettingsTestSuite.runAllTests();
+			
+			// Run integration tests
+			const integrationTest = new SettingsIntegrationTest(this);
+			const integrationTestsPassed = await integrationTest.runAllTests();
+			
+			// Run simple persistence test
+			const persistenceTestPassed = await this.testSettingsPersistence();
+			
+			const allTestsPassed = unitTestsPassed && integrationTestsPassed && persistenceTestPassed;
+			
+			if (allTestsPassed) {
+				new Notice('All settings tests passed ✓');
+				console.log('HTML/CSS Editor: All settings tests PASSED');
+			} else {
+				new Notice('Some settings tests failed ✗');
+				console.error('HTML/CSS Editor: Some settings tests FAILED');
+			}
+			
+		} catch (error) {
+			this.handleError('Failed to run settings tests', error);
+		}
+	}
+
+	async activateView() {
+		try {
+			const { workspace } = this.app;
+
+			let leaf: WorkspaceLeaf | null = null;
+			const leaves = workspace.getLeavesOfType(VIEW_TYPE_HTML_CSS_EDITOR);
+
+			if (leaves.length > 0) {
+				// A view is already open, focus it
+				leaf = leaves[0];
+			} else {
+				// Try to open in main area by getting an active leaf
+				leaf = workspace.getLeaf('tab');
+				await leaf.setViewState({ type: VIEW_TYPE_HTML_CSS_EDITOR, active: true });
+			}
+
+			// Focus the leaf
+			workspace.revealLeaf(leaf);
+		} catch (error) {
+			this.handleError('Failed to activate HTML/CSS Editor view', error);
+		}
+	}
+
+	private handleError(context: string, error: any) {
+		const errorMessage = error instanceof Error ? error.message : String(error);
+		console.error(`HTML/CSS Editor Plugin Error [${context}]:`, error);
+		
+		// Show user-friendly notice
+		if (this.app && this.app.workspace) {
+			// @ts-ignore - Notice is available in Obsidian API
+			new Notice(`HTML/CSS Editor: ${errorMessage}`);
+		}
+	}
+}
