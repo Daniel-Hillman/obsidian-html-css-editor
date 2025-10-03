@@ -143,6 +143,12 @@ No promises though.
 
 Open an issue or send a pull request. I'm pretty open about contributions.
 
+## Support
+
+If this plugin saves you some time, feel free to buy me a coffee!
+
+[![Buy Me A Coffee](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/danielhillman)
+
 ## License
 
 MIT - do whatever you want with it.
