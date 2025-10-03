@@ -28,10 +28,12 @@ class ColorSwatchWidget extends WidgetType {
 			height: 12px;
 			border-radius: 2px;
 			border: 1px solid rgba(0,0,0,0.2);
-			margin: 0 4px;
+			margin: 0 2px 0 4px;
 			vertical-align: middle;
 			cursor: pointer;
 			background-color: ${this.color};
+			position: relative;
+			z-index: 1;
 		`;
 		swatch.title = `Click to edit color: ${this.color}`;
 		return swatch;
@@ -75,7 +77,8 @@ function createColorDecorations(view: EditorView): DecorationSet {
 		decorations.push(
 			Decoration.widget({
 				widget: new ColorSwatchWidget(color),
-				side: 1
+				side: 1,
+				block: false
 			}).range(to)
 		);
 	});
@@ -94,16 +97,14 @@ export const colorPickerPlugin = ViewPlugin.fromClass(
 		}
 
 		update(update: ViewUpdate) {
-			// Debounce decoration updates to prevent flickering
-			if (update.docChanged) {
+			// Update decorations immediately when document changes
+			if (update.docChanged || update.viewportChanged) {
+				// Clear any pending timeout
 				if (this.updateTimeout) {
 					clearTimeout(this.updateTimeout);
+					this.updateTimeout = null;
 				}
-				this.updateTimeout = setTimeout(() => {
-					this.decorations = createColorDecorations(update.view);
-					update.view.requestMeasure();
-				}, 100);
-			} else if (update.viewportChanged) {
+				// Update decorations immediately for better responsiveness
 				this.decorations = createColorDecorations(update.view);
 			}
 		}
@@ -117,23 +118,17 @@ export const colorPickerPlugin = ViewPlugin.fromClass(
 	{
 		decorations: v => v.decorations,
 		eventHandlers: {
-			mousedown: (e, view) => {
-				const target = e.target as HTMLElement;
-				if (target.classList.contains('cm-color-swatch')) {
-					e.preventDefault();
-					e.stopPropagation();
-					const color = (target as any).style.backgroundColor || target.title.split(': ')[1];
-					showColorPicker(view, color, target);
-					return true;
-				}
-				return false;
-			},
-			// Also handle click to ensure it works
 			click: (e, view) => {
 				const target = e.target as HTMLElement;
 				if (target.classList.contains('cm-color-swatch')) {
 					e.preventDefault();
 					e.stopPropagation();
+					
+					// Get the color from the title attribute (more reliable)
+					const titleMatch = target.title.match(/Click to edit color: (.+)/);
+					const color = titleMatch ? titleMatch[1] : target.style.backgroundColor;
+					
+					showColorPicker(view, color, target);
 					return true;
 				}
 				return false;

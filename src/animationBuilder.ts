@@ -179,6 +179,9 @@ export class AnimationBuilderModal extends Modal {
 		{ percent: 0, properties: 'transform: translateX(0);' },
 		{ percent: 100, properties: 'transform: translateX(100px);' }
 	];
+	private isAnimationPaused: boolean = false;
+	private shouldAutoPlay: boolean = true;
+	private updateTimeout: NodeJS.Timeout | null = null;
 
 	constructor(app: App, onSubmit: (css: string) => void) {
 		super(app);
@@ -220,6 +223,7 @@ export class AnimationBuilderModal extends Modal {
 				text.setValue(this.animationName)
 					.onChange(value => {
 						this.animationName = value || 'myAnimation';
+						this.shouldAutoPlay = false; // Don't auto-play when editing
 						this.updatePreview();
 					});
 			});
@@ -235,6 +239,7 @@ export class AnimationBuilderModal extends Modal {
 				.onChange(value => {
 					this.duration = value;
 					durationSetting.setName(`Duration: ${value.toFixed(1)}s`);
+					this.shouldAutoPlay = false; // Don't auto-play when editing
 					this.updatePreview();
 				})
 				.showTooltip();
@@ -361,9 +366,14 @@ export class AnimationBuilderModal extends Modal {
 			percentInput.style.cssText = 'width: 60px; margin-right: 10px;';
 			percentInput.addEventListener('input', () => {
 				keyframe.percent = parseInt(percentInput.value) || 0;
+				this.shouldAutoPlay = false; // Don't auto-play when editing
+				this.debouncedUpdatePreview();
+			});
+			
+			// Only re-render and sort when user finishes editing (on blur)
+			percentInput.addEventListener('blur', () => {
 				this.keyframes.sort((a, b) => a.percent - b.percent);
 				this.renderKeyframes(container);
-				this.updatePreview();
 			});
 
 			// Percent label
@@ -378,7 +388,8 @@ export class AnimationBuilderModal extends Modal {
 			propertiesInput.style.cssText = 'flex: 1; margin: 0 10px;';
 			propertiesInput.addEventListener('input', () => {
 				keyframe.properties = propertiesInput.value;
-				this.updatePreview();
+				this.shouldAutoPlay = false; // Don't auto-play when editing
+				this.debouncedUpdatePreview();
 			});
 
 			// Closing brace
@@ -437,6 +448,8 @@ export class AnimationBuilderModal extends Modal {
 		playBtn.addEventListener('click', () => {
 			// Reset and play animation
 			previewElement.style.animation = 'none';
+			this.isAnimationPaused = false;
+			this.shouldAutoPlay = true;
 			setTimeout(() => {
 				if (this.previewElement) {
 					this.previewElement.style.animation = `${this.animationName} ${this.duration}s ${this.easing} ${this.delay}s ${this.iterations} ${this.direction} ${this.fillMode}`;
@@ -447,10 +460,14 @@ export class AnimationBuilderModal extends Modal {
 
 		pauseBtn.addEventListener('click', () => {
 			previewElement.style.animationPlayState = 'paused';
+			this.isAnimationPaused = true;
+			this.shouldAutoPlay = false;
 		});
 
 		resetBtn.addEventListener('click', () => {
 			previewElement.style.animation = 'none';
+			this.isAnimationPaused = false;
+			this.shouldAutoPlay = false;
 			setTimeout(() => this.updatePreview(), 10);
 		});
 
@@ -459,6 +476,15 @@ export class AnimationBuilderModal extends Modal {
 	}
 
 	private previewElement: HTMLElement | null = null;
+
+	private debouncedUpdatePreview() {
+		if (this.updateTimeout) {
+			clearTimeout(this.updateTimeout);
+		}
+		this.updateTimeout = setTimeout(() => {
+			this.updatePreview();
+		}, 150);
+	}
 
 	private updatePreview() {
 		if (!this.previewElement) return;
@@ -476,13 +502,19 @@ export class AnimationBuilderModal extends Modal {
 		
 		style.textContent = css;
 		
-		// Apply animation
-		this.previewElement.style.animation = 'none';
-		setTimeout(() => {
-			if (this.previewElement) {
-				this.previewElement.style.animation = `${this.animationName} ${this.duration}s ${this.easing} ${this.delay}s ${this.iterations} ${this.direction} ${this.fillMode}`;
-			}
-		}, 10);
+		// Only auto-play if not paused and auto-play is enabled
+		if (this.shouldAutoPlay && !this.isAnimationPaused) {
+			// Apply animation
+			this.previewElement.style.animation = 'none';
+			setTimeout(() => {
+				if (this.previewElement) {
+					this.previewElement.style.animation = `${this.animationName} ${this.duration}s ${this.easing} ${this.delay}s ${this.iterations} ${this.direction} ${this.fillMode}`;
+				}
+			}, 10);
+		} else {
+			// Just update the CSS without playing
+			this.previewElement.style.animation = 'none';
+		}
 	}
 
 	private generateAnimationCSS(): string {
@@ -594,6 +626,11 @@ ${keyframesCSS}
 		const style = document.getElementById('animation-builder-preview');
 		if (style) {
 			style.remove();
+		}
+		
+		// Clean up timeout
+		if (this.updateTimeout) {
+			clearTimeout(this.updateTimeout);
 		}
 		
 		const { contentEl } = this;
