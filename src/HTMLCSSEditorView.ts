@@ -26,7 +26,7 @@ interface ViewState {
 	layout: 'vertical'; // Only side-by-side layout supported
 	editorRatio: number;
 	zoomLevel: number;
-	currentDevice: 'mobile' | 'tablet' | 'desktop' | 'custom';
+	currentDevice: string;
 	isPipMode: boolean;
 	pipPosition: { x: number; y: number };
 	pipSize: { width: number; height: number };
@@ -62,7 +62,7 @@ export class HTMLCSSEditorView extends ItemView {
 	private previewFrameContainer: HTMLElement;
 	private previewFrameWrapper: HTMLElement;
 	private zoomLevel: number = 100;
-	private currentDevice: 'mobile' | 'tablet' | 'desktop' | 'custom' = 'desktop';
+	private currentDevice: string = 'desktop';
 	private pipContainer: HTMLElement | null = null;
 	private pipFrame: HTMLIFrameElement | null = null;
 	private fullscreenOverlay: HTMLElement | null = null;
@@ -2844,9 +2844,8 @@ To load this project: Open HTML/CSS Editor and click "Load Project"
 						deviceSelect.value = this.currentDevice;
 					}, 100);
 				} else {
-					if (selectedDevice.key === 'mobile' || selectedDevice.key === 'tablet' || selectedDevice.key === 'desktop' || selectedDevice.key === 'custom') {
-						this.setDevicePreset(selectedDevice.key, selectedDevice.width, selectedDevice.height);
-					}
+					// Handle all device types, not just the original 4
+					this.setDevicePreset(selectedDevice.key, selectedDevice.width, selectedDevice.height);
 				}
 			}
 		});
@@ -3166,7 +3165,7 @@ To load this project: Open HTML/CSS Editor and click "Load Project"
 			return { width, height };
 		}
 
-		return devices[this.currentDevice] || devices['desktop'];
+		return devices[this.currentDevice as keyof typeof devices] || devices['desktop'];
 	}
 
 	private adjustZoom(delta: number) {
@@ -3211,7 +3210,7 @@ To load this project: Open HTML/CSS Editor and click "Load Project"
 		new Notice(`Fit to window: ${this.zoomLevel}%`);
 	}
 
-	private setDevicePreset(device: 'mobile' | 'tablet' | 'desktop' | 'custom', width?: number, height?: number) {
+	private setDevicePreset(device: string, width?: number, height?: number) {
 		this.currentDevice = device;
 		this.viewState.currentDevice = device;
 		
@@ -3257,8 +3256,9 @@ To load this project: Open HTML/CSS Editor and click "Load Project"
 
 	private updateDevicePreset() {
 		if (this.previewFrameWrapper) {
-			// Remove existing device classes
-			this.previewFrameWrapper.classList.remove('mobile', 'tablet', 'desktop', 'custom');
+			// Remove all existing device classes
+			const allDeviceClasses = ['mobile', 'tablet', 'desktop', 'custom', 'laptop', 'tablet-landscape', 'tablet-portrait', 'mobile-landscape', 'mobile-portrait', 'iphone-14', 'iphone-14-pro-max', 'ipad-pro'];
+			this.previewFrameWrapper.classList.remove(...allDeviceClasses);
 			this.previewFrameWrapper.classList.add(this.currentDevice);
 		}
 	}
