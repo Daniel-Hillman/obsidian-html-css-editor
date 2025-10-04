@@ -3569,13 +3569,15 @@ view Pan/Drag Styles */
 }
 
 /* Hidden elements */
-.html-css-editor-hidden {
-    display: none;
+.html-css-editor-hidden,
+.html-css-editor-toolbar-btn.html-css-editor-hidden {
+    display: none !important;
 }
 
 /* Visible elements */
-.html-css-editor-visible {
-    display: inline-block;
+.html-css-editor-visible,
+.html-css-editor-toolbar-btn.html-css-editor-visible {
+    display: inline-flex !important;
 }
 
 /* Flex display */
@@ -3739,11 +3741,11 @@ view Pan/Drag Styles */
 }
 
 /* Flex display for preview */
-.html-css-editor-preview-flex {
-    display: flex;
+.html-css-editor-pane.html-css-editor-preview-flex {
+    display: flex !important;
 }
 
 /* Hidden preview */
-.html-css-editor-preview-hidden {
-    display: none;
+.html-css-editor-pane.html-css-editor-preview-hidden {
+    display: none !important;
 }

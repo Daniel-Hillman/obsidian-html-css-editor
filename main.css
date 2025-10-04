@@ -2959,11 +2959,13 @@
   padding: 2px 6px;
   border-radius: 3px;
 }
-.html-css-editor-hidden {
-  display: none;
+.html-css-editor-hidden,
+.html-css-editor-toolbar-btn.html-css-editor-hidden {
+  display: none !important;
 }
-.html-css-editor-visible {
-  display: inline-block;
+.html-css-editor-visible,
+.html-css-editor-toolbar-btn.html-css-editor-visible {
+  display: inline-flex !important;
 }
 .html-css-editor-flex {
   display: flex;
@@ -3077,9 +3079,9 @@
 .html-css-editor-resizing .html-css-editor-pane {
   pointer-events: none;
 }
-.html-css-editor-preview-flex {
-  display: flex;
+.html-css-editor-pane.html-css-editor-preview-flex {
+  display: flex !important;
 }
-.html-css-editor-preview-hidden {
-  display: none;
+.html-css-editor-pane.html-css-editor-preview-hidden {
+  display: none !important;
 }

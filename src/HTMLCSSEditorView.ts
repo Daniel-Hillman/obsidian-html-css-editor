@@ -366,11 +366,12 @@ export class HTMLCSSEditorView extends ItemView {
 		// Update refresh button visibility based on settings
 		this.updateRefreshButtonVisibility();
 
-		// Compilation status indicator
+		// Compilation status indicator (only visible in Sass mode)
 		this.compilationStatusEl = viewSection.createEl('div', {
 			cls: 'html-css-editor-compilation-status',
 			text: 'Ready'
 		});
+		this.compilationStatusEl.addClass('html-css-editor-hidden'); // Hidden by default
 
 		// Show Compiled CSS button (only visible in Sass mode)
 		const showCompiledBtn = viewSection.createEl('button', {
@@ -1910,6 +1911,17 @@ export class HTMLCSSEditorView extends ItemView {
 				showCompiledBtn.removeClass('html-css-editor-hidden');
 			} else {
 				showCompiledBtn.addClass('html-css-editor-hidden');
+			}
+		}
+
+		// Show/hide Compilation Status indicator
+		if (this.compilationStatusEl) {
+			if (this.viewState.isSassMode) {
+				this.compilationStatusEl.removeClass('html-css-editor-hidden');
+				this.compilationStatusEl.textContent = 'Ready';
+				this.compilationStatusEl.removeClass('compiling', 'success', 'error');
+			} else {
+				this.compilationStatusEl.addClass('html-css-editor-hidden');
 			}
 		}
 
