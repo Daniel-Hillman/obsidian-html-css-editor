@@ -27,7 +27,7 @@ export default class HTMLCSSEditorPlugin extends Plugin {
 			// Add command
 			this.addCommand({
 				id: 'open-html-css-editor',
-				name: 'Open HTML/CSS Editor',
+				name: 'Open Editor',
 				callback: () => {
 					this.activateView();
 				}
@@ -36,10 +36,9 @@ export default class HTMLCSSEditorPlugin extends Plugin {
 			// Add version check command
 			this.addCommand({
 				id: 'html-css-editor-version',
-				name: 'HTML/CSS Editor: Show Version Info',
+				name: 'Show Version Info',
 				callback: () => {
 					new Notice(`HTML/CSS Editor v2.3.6-updated\nIncludes: Mobile tab fix, responsive improvements, custom size fixes`, 5000);
-					console.log('HTML/CSS Editor Version: 2.3.6-updated');
 				}
 			});
 
@@ -47,7 +46,7 @@ export default class HTMLCSSEditorPlugin extends Plugin {
 			if (process.env.NODE_ENV === 'development') {
 				this.addCommand({
 					id: 'test-html-css-editor-settings',
-					name: 'Test HTML/CSS Editor Settings',
+					name: 'Test Settings',
 					callback: () => {
 						this.runSettingsTests();
 					}
@@ -57,7 +56,7 @@ export default class HTMLCSSEditorPlugin extends Plugin {
 			// Add settings tab
 			this.addSettingTab(new HTMLCSSEditorSettingTab(this.app, this));
 
-			console.log('HTML/CSS Editor plugin loaded successfully');
+			// Plugin loaded successfully
 		} catch (error) {
 			this.handleError('Failed to load plugin', error);
 		}
@@ -65,9 +64,7 @@ export default class HTMLCSSEditorPlugin extends Plugin {
 
 	onunload() {
 		try {
-			// Clean up any open views
-			this.app.workspace.detachLeavesOfType(VIEW_TYPE_HTML_CSS_EDITOR);
-			console.log('HTML/CSS Editor plugin unloaded successfully');
+			// Plugin cleanup - views will be handled automatically by Obsidian
 		} catch (error) {
 			this.handleError('Error during plugin unload', error);
 		}
@@ -82,7 +79,7 @@ export default class HTMLCSSEditorPlugin extends Plugin {
 			// Save migrated settings if they were updated
 			if (!loadedData || loadedData.version !== this.settings.version) {
 				await this.saveSettings();
-				console.log('HTML/CSS Editor: Settings migrated and saved');
+				// Settings migrated and saved
 			}
 		} catch (error) {
 			this.handleError('Failed to load settings', error);
@@ -156,7 +153,7 @@ export default class HTMLCSSEditorPlugin extends Plugin {
 	// Run comprehensive settings tests (for development)
 	async runSettingsTests(): Promise<void> {
 		try {
-			console.log('HTML/CSS Editor: Running settings tests...');
+			// Running settings tests...
 			
 			// Import test classes dynamically to avoid including in production
 			const { SettingsTestSuite } = await import('./settings-test');
@@ -176,7 +173,7 @@ export default class HTMLCSSEditorPlugin extends Plugin {
 			
 			if (allTestsPassed) {
 				new Notice('All settings tests passed ✓');
-				console.log('HTML/CSS Editor: All settings tests PASSED');
+				// All settings tests passed
 			} else {
 				new Notice('Some settings tests failed ✗');
 				console.error('HTML/CSS Editor: Some settings tests FAILED');
@@ -191,8 +188,7 @@ export default class HTMLCSSEditorPlugin extends Plugin {
 		try {
 			const { workspace } = this.app;
 			
-			// Debug log to confirm updated version is running
-			console.log('HTML/CSS Editor: Opening in new tab (v2.3.6-updated)');
+			// Opening editor view
 
 			let leaf: WorkspaceLeaf | null = null;
 			const leaves = workspace.getLeavesOfType(VIEW_TYPE_HTML_CSS_EDITOR);

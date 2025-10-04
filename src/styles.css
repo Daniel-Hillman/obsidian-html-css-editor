@@ -3549,3 +3549,201 @@ view Pan/Drag Styles */
 .html-css-editor-preview-frame-wrapper.rotating {
 	animation: rotateDevice 0.3s ease;
 }
+/* Additional CSS classes to replace inline styles */
+
+/* Toolbar title container */
+.html-css-editor-toolbar-title-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Version element styling */
+.html-css-editor-version {
+    font-size: 10px;
+    color: var(--text-muted);
+    opacity: 0.6;
+    background: var(--background-modifier-border);
+    padding: 2px 6px;
+    border-radius: 3px;
+}
+
+/* Hidden elements */
+.html-css-editor-hidden {
+    display: none;
+}
+
+/* Visible elements */
+.html-css-editor-visible {
+    display: inline-block;
+}
+
+/* Flex display */
+.html-css-editor-flex {
+    display: flex;
+}
+
+/* Flex column */
+.html-css-editor-flex-column {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Full width */
+.html-css-editor-full-width {
+    width: 100%;
+}
+
+/* Margin bottom */
+.html-css-editor-margin-bottom {
+    margin-bottom: 10px;
+}
+
+/* Button container */
+.html-css-editor-button-container {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+/* Modal content styling */
+.html-css-editor-modal-content {
+    max-width: 800px;
+}
+
+/* Modal button container */
+.html-css-editor-modal-button-container {
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Code block styling */
+.html-css-editor-code-block {
+    max-height: 500px;
+    overflow: auto;
+    background: var(--background-primary-alt);
+    padding: 16px;
+    border-radius: 4px;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+/* Code element styling */
+.html-css-editor-code {
+    font-family: var(--font-monospace);
+}
+
+/* Layout transitions */
+.html-css-editor-layout-transitions {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Preview container scrollable */
+.html-css-editor-preview-scrollable {
+    overflow: auto;
+}
+
+/* Preview wrapper centered */
+.html-css-editor-preview-wrapper-centered {
+    margin: auto;
+    position: relative;
+}
+
+/* Pan overlay */
+.html-css-editor-pan-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 100;
+    display: none;
+    pointer-events: none;
+    cursor: grab;
+}
+
+/* Pan overlay active */
+.html-css-editor-pan-overlay-active {
+    display: block;
+    pointer-events: all;
+    cursor: grab;
+}
+
+/* Cursor grab */
+.html-css-editor-cursor-grab {
+    cursor: grab;
+}
+
+/* Cursor default */
+.html-css-editor-cursor-default {
+    cursor: default;
+}
+
+/* No user select */
+.html-css-editor-no-select {
+    user-select: none;
+}
+
+/* Column resize cursor */
+.html-css-editor-cursor-col-resize {
+    cursor: col-resize;
+}
+
+/* Settings version info */
+.html-css-editor-settings-version {
+    margin-bottom: 20px;
+    padding: 8px;
+    background: var(--background-secondary);
+    border-radius: 4px;
+    font-family: monospace;
+}
+
+/* Settings modal */
+.html-css-editor-settings-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--background-primary);
+    border: 1px solid var(--background-modifier-border);
+    border-radius: 8px;
+    padding: 20px;
+    z-index: 1000;
+}
+
+/* Settings textarea */
+.html-css-editor-settings-textarea {
+    width: 500px;
+    height: 300px;
+    font-family: monospace;
+}
+
+/* Preview background colors */
+.html-css-editor-preview-bg-white {
+    background-color: #ffffff;
+}
+
+.html-css-editor-preview-bg-dark {
+    background-color: #1e1e1e;
+}
+
+/* Resizing state */
+.html-css-editor-resizing {
+    user-select: none;
+}
+
+.html-css-editor-resizing .html-css-editor-pane {
+    pointer-events: none;
+}
+
+/* Flex display for preview */
+.html-css-editor-preview-flex {
+    display: flex;
+}
+
+/* Hidden preview */
+.html-css-editor-preview-hidden {
+    display: none;
+}

@@ -109,7 +109,7 @@ export class HTMLCSSEditorView extends ItemView {
 			this.restoreViewState();
 			this.updateExportButtonStates();
 
-			console.log('HTML/CSS Editor view opened');
+			// HTML/CSS Editor view opened
 		} catch (error) {
 			this.handleError('Failed to open HTML/CSS Editor view', error);
 		}
@@ -119,7 +119,7 @@ export class HTMLCSSEditorView extends ItemView {
 		try {
 			this.saveViewState();
 			this.cleanup();
-			console.log('HTML/CSS Editor view closed');
+			// HTML/CSS Editor view closed
 		} catch (error) {
 			this.handleError('Error closing HTML/CSS Editor view', error);
 		}
@@ -127,7 +127,7 @@ export class HTMLCSSEditorView extends ItemView {
 
 	onSettingsChanged() {
 		try {
-			console.log('HTML/CSS Editor: Applying settings changes...');
+			// Applying settings changes...
 
 			// Store previous settings for comparison
 			const previousLayout = this.viewState.layout;
@@ -147,7 +147,7 @@ export class HTMLCSSEditorView extends ItemView {
 				new Notice('Editor ratio updated');
 			}
 
-			console.log('HTML/CSS Editor: Settings applied successfully');
+			// Settings applied successfully
 		} catch (error) {
 			this.handleError('Error applying settings changes', error);
 		}
@@ -193,7 +193,7 @@ export class HTMLCSSEditorView extends ItemView {
 		const titleContainer = this.toolbar.createEl('div', {
 			cls: 'html-css-editor-toolbar-title-container'
 		});
-		titleContainer.style.cssText = 'display: flex; align-items: center; gap: 8px;';
+		titleContainer.addClass('html-css-editor-toolbar-title-container');
 		
 		titleContainer.createEl('div', {
 			cls: 'html-css-editor-toolbar-title',
@@ -204,13 +204,7 @@ export class HTMLCSSEditorView extends ItemView {
 			}
 		});
 		
-		// Version indicator
-		const versionEl = titleContainer.createEl('span', {
-			cls: 'html-css-editor-version',
-			text: 'v2.3.6-updated',
-			attr: { 'title': 'Plugin version - includes mobile tab fix and responsive improvements' }
-		});
-		versionEl.style.cssText = 'font-size: 10px; color: var(--text-muted); opacity: 0.6; background: var(--background-modifier-border); padding: 2px 6px; border-radius: 3px;';
+		// Version indicator removed for cleaner interface
 
 		const toolbarActions = this.toolbar.createEl('div', {
 			cls: 'html-css-editor-toolbar-actions'
@@ -388,7 +382,7 @@ export class HTMLCSSEditorView extends ItemView {
 			}
 		});
 		showCompiledBtn.addEventListener('click', () => this.toggleCompiledView());
-		showCompiledBtn.style.display = 'none'; // Hidden by default
+		showCompiledBtn.addClass('html-css-editor-hidden'); // Hidden by default
 
 		// Animation Inspector button
 		const animationInspectorBtn = viewSection.createEl('button', {
@@ -889,7 +883,15 @@ export class HTMLCSSEditorView extends ItemView {
 
 		// Apply preview background
 		if (this.previewFrame) {
-			this.previewFrame.style.backgroundColor = settings.previewBackground;
+			this.previewFrame.removeClass('html-css-editor-preview-bg-white', 'html-css-editor-preview-bg-dark');
+			if (settings.previewBackground === '#ffffff') {
+				this.previewFrame.addClass('html-css-editor-preview-bg-white');
+			} else if (settings.previewBackground === '#1e1e1e') {
+				this.previewFrame.addClass('html-css-editor-preview-bg-dark');
+			} else {
+				// For custom colors, still use inline style as fallback
+				this.previewFrame.style.backgroundColor = settings.previewBackground;
+			}
 		}
 
 		// Update refresh button visibility based on auto-refresh setting
@@ -1042,7 +1044,13 @@ export class HTMLCSSEditorView extends ItemView {
 
 	private updateRefreshButtonVisibility() {
 		if (this.refreshButton) {
-			this.refreshButton.style.display = this.plugin.settings.autoRefresh ? 'none' : 'inline-block';
+			if (this.plugin.settings.autoRefresh) {
+				this.refreshButton.addClass('html-css-editor-hidden');
+				this.refreshButton.removeClass('html-css-editor-visible');
+			} else {
+				this.refreshButton.removeClass('html-css-editor-hidden');
+				this.refreshButton.addClass('html-css-editor-visible');
+			}
 		}
 	}
 
@@ -1179,7 +1187,7 @@ export class HTMLCSSEditorView extends ItemView {
 	private escapeHtml(text: string): string {
 		const div = document.createElement('div');
 		div.textContent = text;
-		return div.innerHTML;
+		return div.textContent || '';
 	}
 
 	private generatePreviewContent(): string {
@@ -1231,7 +1239,7 @@ export class HTMLCSSEditorView extends ItemView {
         document.addEventListener('click', function(e) {
             if (e.target.tagName === 'A' && e.target.href) {
                 e.preventDefault();
-                console.log('Link clicked:', e.target.href);
+                // Link clicked - prevented default
             }
         });
         
@@ -1299,7 +1307,13 @@ export class HTMLCSSEditorView extends ItemView {
 
 	private togglePreview() {
 		this.viewState.isPreviewVisible = !this.viewState.isPreviewVisible;
-		this.previewPane.style.display = this.viewState.isPreviewVisible ? 'flex' : 'none';
+		if (this.viewState.isPreviewVisible) {
+			this.previewPane.removeClass('html-css-editor-preview-hidden');
+			this.previewPane.addClass('html-css-editor-preview-flex');
+		} else {
+			this.previewPane.addClass('html-css-editor-preview-hidden');
+			this.previewPane.removeClass('html-css-editor-preview-flex');
+		}
 		this.updatePaneRatios();
 	}
 
@@ -1312,9 +1326,9 @@ export class HTMLCSSEditorView extends ItemView {
 
 	private startResize(e: MouseEvent) {
 		this.isResizing = true;
-		this.contentContainer.addClass('resizing');
-		document.body.style.userSelect = 'none';
-		document.body.style.cursor = 'col-resize'; // Always column resize for side-by-side
+		this.contentContainer.addClass('html-css-editor-resizing');
+		document.body.addClass('html-css-editor-no-select');
+		document.body.addClass('html-css-editor-cursor-col-resize'); // Always column resize for side-by-side
 		e.preventDefault();
 	}
 
@@ -1352,9 +1366,9 @@ export class HTMLCSSEditorView extends ItemView {
 		if (!this.isResizing) return;
 
 		this.isResizing = false;
-		this.contentContainer.removeClass('resizing');
-		document.body.style.userSelect = '';
-		document.body.style.cursor = '';
+		this.contentContainer.removeClass('html-css-editor-resizing');
+		document.body.removeClass('html-css-editor-no-select');
+		document.body.removeClass('html-css-editor-cursor-col-resize');
 
 		// Final update to ensure exact positioning
 		this.updatePaneRatios();
@@ -1406,7 +1420,13 @@ export class HTMLCSSEditorView extends ItemView {
 
 				// Restore preview visibility
 				if (this.previewPane) {
-					this.previewPane.style.display = this.viewState.isPreviewVisible ? 'flex' : 'none';
+					if (this.viewState.isPreviewVisible) {
+						this.previewPane.removeClass('html-css-editor-preview-hidden');
+						this.previewPane.addClass('html-css-editor-preview-flex');
+					} else {
+						this.previewPane.addClass('html-css-editor-preview-hidden');
+						this.previewPane.removeClass('html-css-editor-preview-flex');
+					}
 				}
 
 				// Restore preview settings
@@ -1536,8 +1556,8 @@ export class HTMLCSSEditorView extends ItemView {
 
 			// Open the file
 			const file = this.app.vault.getAbstractFileByPath(finalFilename);
-			if (file) {
-				await this.app.workspace.getLeaf(false).openFile(file as any);
+			if (file && file instanceof TFile) {
+				await this.app.workspace.getLeaf(false).openFile(file);
 			}
 		} catch (error) {
 			console.error('Error exporting Sass:', error);
@@ -1547,7 +1567,7 @@ export class HTMLCSSEditorView extends ItemView {
 
 	private async promptForFilename(defaultName: string): Promise<string | null> {
 		return new Promise((resolve) => {
-			const modal = new (this.app as any).Modal(this.app);
+			const modal = new Modal(this.app);
 			modal.titleEl.setText('Export Sass File');
 			
 			const contentEl = modal.contentEl;
@@ -1557,13 +1577,11 @@ export class HTMLCSSEditorView extends ItemView {
 				type: 'text',
 				value: defaultName
 			});
-			input.style.width = '100%';
-			input.style.marginBottom = '10px';
+			input.addClass('html-css-editor-full-width');
+			input.addClass('html-css-editor-margin-bottom');
 			
 			const buttonContainer = contentEl.createEl('div');
-			buttonContainer.style.display = 'flex';
-			buttonContainer.style.gap = '10px';
-			buttonContainer.style.justifyContent = 'flex-end';
+			buttonContainer.addClass('html-css-editor-button-container');
 			
 			const cancelBtn = buttonContainer.createEl('button', { text: 'Cancel' });
 			cancelBtn.addEventListener('click', () => {
@@ -1878,13 +1896,21 @@ export class HTMLCSSEditorView extends ItemView {
 		// Show/hide Export Sass button
 		const exportSassBtn = this.toolbar.querySelector('.export-sass-btn') as HTMLElement;
 		if (exportSassBtn) {
-			exportSassBtn.style.display = this.viewState.isSassMode ? '' : 'none';
+			if (this.viewState.isSassMode) {
+				exportSassBtn.removeClass('html-css-editor-hidden');
+			} else {
+				exportSassBtn.addClass('html-css-editor-hidden');
+			}
 		}
 
 		// Show/hide Show Compiled CSS button
 		const showCompiledBtn = this.toolbar.querySelector('.show-compiled-btn') as HTMLElement;
 		if (showCompiledBtn) {
-			showCompiledBtn.style.display = this.viewState.isSassMode ? '' : 'none';
+			if (this.viewState.isSassMode) {
+				showCompiledBtn.removeClass('html-css-editor-hidden');
+			} else {
+				showCompiledBtn.addClass('html-css-editor-hidden');
+			}
 		}
 
 		// Trigger preview update
@@ -1901,18 +1927,15 @@ export class HTMLCSSEditorView extends ItemView {
 		const compiledCSS = this.compileSass(sassContent);
 
 		// Create a modal to show compiled CSS
-		const modal = new (this.app as any).Modal(this.app);
+		const modal = new Modal(this.app);
 		modal.titleEl.setText('Compiled CSS Output');
 		
 		const contentEl = modal.contentEl;
-		contentEl.style.maxWidth = '800px';
+		contentEl.addClass('html-css-editor-modal-content');
 		
 		// Add copy button
 		const buttonContainer = contentEl.createEl('div');
-		buttonContainer.style.marginBottom = '10px';
-		buttonContainer.style.display = 'flex';
-		buttonContainer.style.justifyContent = 'space-between';
-		buttonContainer.style.alignItems = 'center';
+		buttonContainer.addClass('html-css-editor-modal-button-container');
 		
 		const info = buttonContainer.createEl('span', {
 			text: `${compiledCSS.split('\n').length} lines`,
@@ -1930,17 +1953,11 @@ export class HTMLCSSEditorView extends ItemView {
 		
 		// Show compiled CSS in a code block
 		const codeBlock = contentEl.createEl('pre');
-		codeBlock.style.maxHeight = '500px';
-		codeBlock.style.overflow = 'auto';
-		codeBlock.style.background = 'var(--background-primary-alt)';
-		codeBlock.style.padding = '16px';
-		codeBlock.style.borderRadius = '4px';
-		codeBlock.style.fontSize = '13px';
-		codeBlock.style.lineHeight = '1.5';
+		codeBlock.addClass('html-css-editor-code-block');
 		
 		const code = codeBlock.createEl('code');
 		code.textContent = compiledCSS;
-		code.style.fontFamily = 'var(--font-monospace)';
+		code.addClass('html-css-editor-code');
 		
 		modal.open();
 	}
@@ -1993,7 +2010,7 @@ export class HTMLCSSEditorView extends ItemView {
 				this.compilationStatusEl.addClass('success');
 			}
 
-			console.log(`Sass compiled in ${this.lastCompilationTime.toFixed(2)}ms`);
+			// Sass compiled successfully
 			return result.css;
 		} catch (error) {
 			// Log error quietly to console for debugging
@@ -2340,8 +2357,8 @@ To load this project: Open HTML/CSS Editor and click "Load Project"
 			// Step 5: Save the file
 			if (fileExists) {
 				const file = this.app.vault.getAbstractFileByPath(fullPath);
-				if (file) {
-					await this.app.vault.modify(file as any, markdownContent);
+				if (file && file instanceof TFile) {
+					await this.app.vault.modify(file, markdownContent);
 				}
 			} else {
 				await this.app.vault.create(fullPath, markdownContent);
@@ -2351,8 +2368,8 @@ To load this project: Open HTML/CSS Editor and click "Load Project"
 
 			// Open the saved file
 			const file = this.app.vault.getAbstractFileByPath(fullPath);
-			if (file) {
-				await this.app.workspace.getLeaf(false).openFile(file as any);
+			if (file && file instanceof TFile) {
+				await this.app.workspace.getLeaf(false).openFile(file);
 			}
 		} catch (error) {
 			console.error('Error saving project:', error);
@@ -2486,15 +2503,37 @@ To load this project: Open HTML/CSS Editor and click "Load Project"
 
 	private async showQuickPicker(items: string[], placeholder: string): Promise<number> {
 		return new Promise((resolve) => {
-			const modal = new (this.app as any).SuggestModal(this.app);
-			modal.setPlaceholder(placeholder);
-			modal.setInstructions([{ command: '↑↓', purpose: 'Navigate' }, { command: '↵', purpose: 'Select' }, { command: 'esc', purpose: 'Cancel' }]);
+			class ItemPickerModal extends FuzzySuggestModal<string> {
+				constructor(app: App, private items: string[], private onSelect: (index: number) => void) {
+					super(app);
+					this.setPlaceholder(placeholder);
+					this.setInstructions([{ command: '↑↓', purpose: 'Navigate' }, { command: '↵', purpose: 'Select' }, { command: 'esc', purpose: 'Cancel' }]);
+				}
+
+				getItems(): string[] {
+					return this.items;
+				}
+
+				getItemText(item: string): string {
+					return item;
+				}
+
+				onChooseItem(item: string): void {
+					const index = this.items.indexOf(item);
+					this.onSelect(index);
+				}
+			}
+
+			const modal = new ItemPickerModal(this.app, items, resolve);
 			
-			// Override getSuggestions
+			// Override getSuggestions to return proper FuzzyMatch format
 			modal.getSuggestions = (query: string) => {
 				return items
-					.map((item, index) => ({ item, index }))
-					.filter(({ item }) => item.toLowerCase().includes(query.toLowerCase()));
+					.filter(item => item.toLowerCase().includes(query.toLowerCase()))
+					.map(item => ({
+						item,
+						match: { score: 1, matches: [] as any[] }
+					}));
 			};
 			
 			// Override renderSuggestion
@@ -2573,12 +2612,8 @@ To load this project: Open HTML/CSS Editor and click "Load Project"
 		const fixShiftNumberKeys = (e: KeyboardEvent) => {
 			// Check if this is a Shift+number key
 			if (e.shiftKey && e.code && e.code.match(/^Digit[1-6]$/)) {
-				console.log('Shift+number detected:', {
-					key: e.key,
-					code: e.code,
-					shiftKey: e.shiftKey,
-					defaultPrevented: e.defaultPrevented
-				});
+				// Shift+number detected for device preset - logging key info
+				// Key: e.key, Code: e.code, ShiftKey: e.shiftKey, DefaultPrevented: e.defaultPrevented
 				
 				// If the key is being blocked or wrong, we can't really fix it here
 				// This is likely a keyboard layout or Obsidian-level issue
@@ -2688,9 +2723,9 @@ To load this project: Open HTML/CSS Editor and click "Load Project"
 
 	private enhanceLayoutTransitions() {
 		// Add smooth transitions for layout changes
-		this.contentContainer.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
-		this.editorPane.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
-		this.previewPane.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+		this.contentContainer.addClass('html-css-editor-layout-transitions');
+		this.editorPane.addClass('html-css-editor-layout-transitions');
+		this.previewPane.addClass('html-css-editor-layout-transitions');
 
 		// Add resize observer for responsive behavior
 		const resizeObserver = new ResizeObserver(() => {
@@ -2809,7 +2844,9 @@ To load this project: Open HTML/CSS Editor and click "Load Project"
 						deviceSelect.value = this.currentDevice;
 					}, 100);
 				} else {
-					this.setDevicePreset(selectedDevice.key as any, selectedDevice.width, selectedDevice.height);
+					if (selectedDevice.key === 'mobile' || selectedDevice.key === 'tablet' || selectedDevice.key === 'desktop' || selectedDevice.key === 'custom') {
+						this.setDevicePreset(selectedDevice.key, selectedDevice.width, selectedDevice.height);
+					}
 				}
 			}
 		});
@@ -2851,28 +2888,17 @@ To load this project: Open HTML/CSS Editor and click "Load Project"
 		});
 
 		// Make preview container scrollable for panning
-		this.previewFrameContainer.style.overflow = 'auto';
+		this.previewFrameContainer.addClass('html-css-editor-preview-scrollable');
 		
 		// Center the preview wrapper
 		if (this.previewFrameWrapper) {
-			this.previewFrameWrapper.style.margin = 'auto';
-			this.previewFrameWrapper.style.position = 'relative';
+			this.previewFrameWrapper.addClass('html-css-editor-preview-wrapper-centered');
 		}
 
 		// Create transparent overlay for capturing events over iframe
 		const panOverlay = this.previewFrameContainer.createEl('div', {
 			cls: 'html-css-editor-pan-overlay'
 		});
-		panOverlay.style.cssText = `
-			position: absolute;
-			top: 0;
-			left: 0;
-			right: 0;
-			bottom: 0;
-			z-index: 1000;
-			pointer-events: none;
-			display: none;
-		`;
 
 		let isPanning = false;
 		let spacePressed = false;
@@ -2900,10 +2926,8 @@ To load this project: Open HTML/CSS Editor and click "Load Project"
 			if (e.code === 'Space' && !spacePressed && !isPanning) {
 				spacePressed = true;
 				// Show overlay to capture events over iframe
-				panOverlay.style.display = 'block';
-				panOverlay.style.pointerEvents = 'all';
-				panOverlay.style.cursor = 'grab';
-				this.previewFrameContainer.style.cursor = 'grab';
+				panOverlay.addClass('html-css-editor-pan-overlay-active');
+				this.previewFrameContainer.addClass('html-css-editor-cursor-grab');
 				helpBtn.classList.add('active');
 				e.preventDefault();
 			}
@@ -2928,9 +2952,9 @@ To load this project: Open HTML/CSS Editor and click "Load Project"
 				spacePressed = false;
 				if (!isPanning) {
 					// Hide overlay
-					panOverlay.style.display = 'none';
-					panOverlay.style.pointerEvents = 'none';
-					this.previewFrameContainer.style.cursor = 'default';
+					panOverlay.removeClass('html-css-editor-pan-overlay-active');
+					this.previewFrameContainer.removeClass('html-css-editor-cursor-grab');
+					this.previewFrameContainer.addClass('html-css-editor-cursor-default');
 					helpBtn.classList.remove('active');
 				}
 			}

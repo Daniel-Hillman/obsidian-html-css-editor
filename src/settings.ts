@@ -175,7 +175,7 @@ export class SettingsValidator {
 		try {
 			// Handle null or undefined settings
 			if (!settings || typeof settings !== 'object') {
-				console.log('HTML/CSS Editor: Initializing with default settings');
+				// Initializing with default settings
 				return { ...DEFAULT_SETTINGS };
 			}
 
@@ -188,7 +188,7 @@ export class SettingsValidator {
 				return this.validateSettings(settings);
 			}
 
-			console.log(`HTML/CSS Editor: Migrating settings from version ${currentVersion} to ${latestVersion}`);
+			// Migrating settings to latest version
 
 			// Perform version-specific migrations
 			let migratedSettings = { ...settings };
@@ -210,7 +210,7 @@ export class SettingsValidator {
 			// Validate the migrated settings
 			const validatedSettings = this.validateSettings(migratedSettings);
 			
-			console.log('HTML/CSS Editor: Settings migration completed successfully');
+			// Settings migration completed successfully
 			return validatedSettings;
 
 		} catch (error) {
@@ -349,7 +349,7 @@ export class HTMLCSSEditorSettingTab extends PluginSettingTab {
 				cls: 'setting-item-description',
 				text: 'Version: 2.3.6-updated (includes mobile tab fix and responsive improvements)'
 			});
-			versionInfo.style.cssText = 'margin-bottom: 20px; padding: 8px; background: var(--background-secondary); border-radius: 4px; font-family: monospace;';
+			versionInfo.addClass('html-css-editor-settings-version');
 
 			// Add settings info section
 			this.createSettingsInfo();
@@ -611,7 +611,9 @@ export class HTMLCSSEditorSettingTab extends PluginSettingTab {
 			}
 			
 			// Update the setting
-			(this.plugin.settings as any)[key] = value;
+			if (key in this.plugin.settings) {
+				(this.plugin.settings as Record<string, any>)[key] = value;
+			}
 			
 			// Save and notify
 			await this.plugin.saveSettings();
@@ -699,15 +701,11 @@ export class HTMLCSSEditorSettingTab extends PluginSettingTab {
 			} else {
 				// Fallback: show in a modal or text area
 				const modal = document.createElement('div');
-				modal.style.cssText = `
-					position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-					background: var(--background-primary); border: 1px solid var(--background-modifier-border);
-					padding: 20px; border-radius: 8px; z-index: 1000; max-width: 80%; max-height: 80%;
-				`;
+				modal.className = 'html-css-editor-settings-modal';
 				
 				const textarea = document.createElement('textarea');
 				textarea.value = settingsJson;
-				textarea.style.cssText = 'width: 500px; height: 300px; font-family: monospace;';
+				textarea.className = 'html-css-editor-settings-textarea';
 				textarea.readOnly = true;
 				textarea.select();
 				

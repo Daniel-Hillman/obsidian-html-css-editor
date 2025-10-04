@@ -248,7 +248,7 @@ class AnimationTimelineWidget extends WidgetType {
 
 		// Play/pause button
 		const playBtn = document.createElement('button');
-		playBtn.innerHTML = 'Play';
+		playBtn.textContent = 'Play';
 		playBtn.style.cssText = `
 			background: none;
 			border: none;
@@ -284,7 +284,7 @@ class AnimationTimelineWidget extends WidgetType {
 		let isPlaying = false;
 		playBtn.addEventListener('click', () => {
 			isPlaying = !isPlaying;
-			playBtn.innerHTML = isPlaying ? 'Pause' : 'Play';
+			playBtn.textContent = isPlaying ? 'Pause' : 'Play';
 			// TODO: Control animation playback
 		});
 
