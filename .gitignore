@@ -1,24 +1,24 @@
-# Dependencies
+#Dependencies
 node_modules/
 
-# Build output (main.js included for user convenience)
+#Build output
 *.js.map
 
-# Development
+#Development
 .env
 .env.test
 *.log
 npm-debug.log*
 
-# IDE
+#IDE
 .vscode/
 .idea/
 
-# OS
+#OS
 .DS_Store
 Thumbs.db
 
-# Cache
+#Cache
 .cache/
 .npm/
 *.tsbuildinfo

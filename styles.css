@@ -513,6 +513,8 @@
     cursor: col-resize;
     z-index: 10;
     transition: background-color 0.2s ease;
+    top: 0;
+    transform: translateX(-50%);
 }
 
 .layout-vertical .html-css-editor-resize-handle {
@@ -526,6 +528,26 @@
 
 .html-css-editor-resize-handle:hover {
     background-color: var(--interactive-accent);
+}
+
+/* Resize cursor styles */
+.html-css-editor-no-select {
+    user-select: none !important;
+    -webkit-user-select: none !important;
+    -moz-user-select: none !important;
+    -ms-user-select: none !important;
+}
+
+.html-css-editor-cursor-col-resize {
+    cursor: col-resize !important;
+}
+
+.html-css-editor-resizing {
+    pointer-events: none;
+}
+
+.html-css-editor-resizing .html-css-editor-resize-handle {
+    pointer-events: all;
 }
 
 /* Dark theme adjustments */

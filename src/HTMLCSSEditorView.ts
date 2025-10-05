@@ -815,6 +815,9 @@ export class HTMLCSSEditorView extends ItemView {
 			cls: 'html-css-editor-resize-handle'
 		});
 
+		// Position the resize handle properly
+		this.updateResizeHandlePosition();
+
 		this.resizeHandle.addEventListener('mousedown', (e) => this.startResize(e));
 		document.addEventListener('mousemove', (e) => this.handleResize(e));
 		document.addEventListener('mouseup', () => this.stopResize());
@@ -986,81 +989,20 @@ export class HTMLCSSEditorView extends ItemView {
 		// Use requestAnimationFrame for smooth updates
 		requestAnimationFrame(() => {
 			// Always use side-by-side (vertical) layout
-			// Remove existing width classes
-			this.editorPane.removeClass('html-css-editor-pane-width-60', 'html-css-editor-pane-width-40');
-			this.previewPane.removeClass('html-css-editor-pane-width-60', 'html-css-editor-pane-width-40');
+			this.editorPane.style.width = `${editorPercent}%`;
+			this.previewPane.style.width = `${previewPercent}%`;
 			
-			// Apply appropriate width classes based on ratio
-			if (Math.abs(ratio - 0.6) < 0.05) {
-				this.editorPane.addClass('html-css-editor-pane-width-60');
-				this.previewPane.addClass('html-css-editor-pane-width-40');
-			} else {
-				// For custom ratios, create dynamic CSS
-				const customClass = `html-css-editor-custom-ratio-${Math.round(ratio * 100)}`;
-				this.editorPane.removeClass(this.editorPane.className.split(' ').filter(c => c.startsWith('html-css-editor-custom-ratio-')).join(' '));
-				this.previewPane.removeClass(this.previewPane.className.split(' ').filter(c => c.startsWith('html-css-editor-custom-ratio-')).join(' '));
-				
-				this.editorPane.addClass(`${customClass}-editor`);
-				this.previewPane.addClass(`${customClass}-preview`);
-				
-				// Create or update custom CSS rule
-				let styleEl = document.getElementById('html-css-editor-custom-styles');
-				if (!styleEl) {
-					styleEl = document.createElement('style');
-					styleEl.id = 'html-css-editor-custom-styles';
-					document.head.appendChild(styleEl);
-				}
-				const existingContent = styleEl.textContent || '';
-				const newRule = `.${customClass}-editor { width: ${editorPercent}% !important; height: 100% !important; } .${customClass}-preview { width: ${previewPercent}% !important; height: 100% !important; }`;
-				if (!existingContent.includes(newRule)) {
-					styleEl.textContent = existingContent + newRule;
-				}
-			}
-			
-			this.editorPane.addClass('html-css-editor-pane-height-100');
-			this.previewPane.addClass('html-css-editor-pane-height-100');
-
-			// Update resize handle position to match the current ratio
+			// Update resize handle position
 			this.updateResizeHandlePosition();
-
-			// Refresh CodeMirror editors after layout change
-			setTimeout(() => {
-				if (this.htmlEditor) this.htmlEditor.requestMeasure();
-				if (this.cssEditor) this.cssEditor.requestMeasure();
-			}, 100);
 		});
 	}
 
 	private updateResizeHandlePosition() {
 		if (!this.resizeHandle) return;
-
-		const ratio = this.viewState.editorRatio * 100;
-
-		// Always position for side-by-side layout
-		this.resizeHandle.removeClass('html-css-editor-resize-handle-left-60');
-		this.resizeHandle.addClass('html-css-editor-resize-handle-top-0');
 		
-		if (Math.abs(ratio - 60) < 1) {
-			this.resizeHandle.addClass('html-css-editor-resize-handle-left-60');
-		} else {
-			// For custom positions, create dynamic CSS
-			const customClass = `html-css-editor-resize-handle-left-${Math.round(ratio)}`;
-			this.resizeHandle.removeClass(this.resizeHandle.className.split(' ').filter(c => c.startsWith('html-css-editor-resize-handle-left-')).join(' '));
-			this.resizeHandle.addClass(customClass);
-			
-			// Create or update custom CSS rule
-			let styleEl = document.getElementById('html-css-editor-custom-styles');
-			if (!styleEl) {
-				styleEl = document.createElement('style');
-				styleEl.id = 'html-css-editor-custom-styles';
-				document.head.appendChild(styleEl);
-			}
-			const existingContent = styleEl.textContent || '';
-			const newRule = `.${customClass} { left: ${ratio}% !important; }`;
-			if (!existingContent.includes(newRule)) {
-				styleEl.textContent = existingContent + newRule;
-			}
-		}
+		const ratio = this.viewState.editorRatio;
+		const leftPercent = ratio * 100;
+		this.resizeHandle.style.left = `${leftPercent}%`;
 	}
 
 	private lastButtonUpdateTime: number = 0;
@@ -1102,7 +1044,23 @@ export class HTMLCSSEditorView extends ItemView {
 	private manualRefreshPreview() {
 		// Force immediate preview update regardless of auto-refresh setting
 		this.clearUpdateTimeout();
+		
+		// Show visual feedback
+		if (this.refreshButton) {
+			this.refreshButton.textContent = 'Refreshing...';
+			this.refreshButton.disabled = true;
+		}
+		
+		// Update preview
 		this.updatePreview();
+		
+		// Reset button after a short delay
+		setTimeout(() => {
+			if (this.refreshButton) {
+				this.refreshButton.textContent = 'Refresh Preview';
+				this.refreshButton.disabled = false;
+			}
+		}, 500);
 	}
 
 	private updateRefreshButtonVisibility() {
@@ -1370,14 +1328,22 @@ export class HTMLCSSEditorView extends ItemView {
 
 	private togglePreview() {
 		this.viewState.isPreviewVisible = !this.viewState.isPreviewVisible;
+		
 		if (this.viewState.isPreviewVisible) {
+			this.previewPane.style.display = 'flex';
 			this.previewPane.removeClass('html-css-editor-preview-hidden');
-			this.previewPane.addClass('html-css-editor-preview-flex');
+			this.resizeHandle.style.display = 'block';
 		} else {
+			this.previewPane.style.display = 'none';
 			this.previewPane.addClass('html-css-editor-preview-hidden');
-			this.previewPane.removeClass('html-css-editor-preview-flex');
+			this.resizeHandle.style.display = 'none';
+			// Make editor take full width when preview is hidden
+			this.editorPane.style.width = '100%';
 		}
-		this.updatePaneRatios();
+		
+		if (this.viewState.isPreviewVisible) {
+			this.updatePaneRatios();
+		}
 	}
 
 	// Layout toggle removed - side-by-side is the only layout

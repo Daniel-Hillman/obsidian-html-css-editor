@@ -23,7 +23,6 @@ It works with any color format - hex, rgb, hsl, named colors, whatever. Change o
 4. Hit apply
 5. All instances change
 
-Way faster than googling "light blue hex code" for the 100th time.
 
 ## Responsive Testing
 
@@ -66,7 +65,7 @@ Click "Inspector" to see how smooth your animations are running. It shows FPS an
 
 ## Sass Support
 
-Yeah, it does Sass. Variables, mixins, nesting, functions - all of it.
+Yeah, it does Sass. Variables, mixins, nesting, functions.
 
 ### Getting started
 Toggle the CSS/Sass switch and start writing Sass. You get autocomplete for variables and functions. Click "Templates" for common patterns like mixins and grid systems.
@@ -82,7 +81,7 @@ Hit "Save Project", give it a name, pick where to save it. It gets saved as a ma
 ### Loading projects
 Click "Load Project" and search for any project you've saved. They show up no matter where you saved them in your vault.
 
-### The cool part
+### Heads up
 Since projects are just markdown files, you can edit them like any other note. Add comments, link to other notes, whatever.
 
 ## Common Workflows
@@ -115,25 +114,13 @@ Since projects are just markdown files, you can edit them like any other note. A
 
 Click the blue dot, try different shades, see it update live.
 
-## Keyboard Shortcuts
-
-- `Ctrl+S` - Save as HTML file
-- `Ctrl+Shift+C` - Copy everything to clipboard  
-- `F5` - Refresh the preview
-- `Ctrl+0` - Center the preview
-- `Spacebar + drag` - Pan around (when not typing)
-- `Ctrl + scroll` - Zoom in/out
-
 ## Troubleshooting
 
 ### Color picker not working?
 Make sure you're in CSS mode and the color format is valid. Click directly on the little colored square, not the text.
 
 ### Device sizes acting weird?
-Try the "Fit to Window" button or refresh with F5. For custom sizes, make sure you're using reasonable numbers.
-
-### Spacebar not working for spaces?
-The spacebar pan only works when you're not typing in the code editors. If you're focused on HTML/CSS, spacebar works normally for spaces.
+Try the "Fit to Window" button or refresh with F5. For custom sizes, make sure you're using reasonable numbers. or try reselecting your desired template from the picker, then zoom out/in. 
 
 ## Tips
 
