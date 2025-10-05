@@ -1,7 +1,7 @@
 {
 	"id": "html-css-editor",
 	"name": "HTML/CSS Editor",
-	"version": "2.3.8",
+	"version": "2.3.7",
 	"minAppVersion": "0.15.0",
 	"description": "Professional HTML & CSS editor with live preview capabilities",
 	"author": "Daniel Hillman",
