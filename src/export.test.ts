@@ -15,7 +15,7 @@ export class ExportUnitTests {
 	}
 
 	async runAllTests(): Promise<boolean> {
-		console.log('🧪 Starting Export Unit Tests');
+		// Starting Export Unit Tests
 
 		await this.runner.runSuite('HTML Generation', [
 			{ name: 'should generate complete HTML document', fn: () => this.testCompleteHTMLGeneration() },
@@ -474,14 +474,19 @@ export class ExportUnitTests {
 		const originalClipboard = navigator.clipboard;
 		
 		// Remove clipboard API to test fallback
-		(navigator as any).clipboard = undefined;
+		const originalClipboardDescriptor = Object.getOwnPropertyDescriptor(navigator, 'clipboard');
+		Object.defineProperty(navigator, 'clipboard', { value: undefined, configurable: true });
 		
 		// The export handler should handle this gracefully
 		// We can't directly test the async method here, but we can verify the fallback logic exists
 		Assert.isUndefined(navigator.clipboard, 'Clipboard API should be unavailable for test');
 		
 		// Restore clipboard
-		(navigator as any).clipboard = originalClipboard;
+		if (originalClipboardDescriptor) {
+			Object.defineProperty(navigator, 'clipboard', originalClipboardDescriptor);
+		} else {
+			Object.defineProperty(navigator, 'clipboard', { value: originalClipboard, configurable: true });
+		}
 	}
 
 	private testFileCreationErrorHandling(): void {
@@ -501,7 +506,7 @@ export class ExportUnitTests {
 		
 		for (const content of invalidContents) {
 			// The export handler should handle invalid content gracefully
-			const validation = this.exportHandler.canExport(content as any, '');
+			const validation = this.exportHandler.canExport(content as string, '');
 			
 			// Should either reject or handle gracefully
 			Assert.isDefined(validation, 'Validation should return a result');

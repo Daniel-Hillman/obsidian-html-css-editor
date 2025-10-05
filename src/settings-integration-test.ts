@@ -12,12 +12,12 @@ export class SettingsIntegrationTest {
 	}
 	
 	async runPersistenceTest(): Promise<boolean> {
-		console.log('Starting settings persistence integration test...');
+		// Starting settings persistence integration test
 		
 		try {
 			// Step 1: Save current settings as backup
 			const originalSettings = { ...this.plugin.settings };
-			console.log('Original settings backed up');
+			// Original settings backed up
 			
 			// Step 2: Create test settings with unique values
 			const testSettings = {
@@ -39,11 +39,11 @@ export class SettingsIntegrationTest {
 			// Step 3: Apply test settings
 			this.plugin.settings = testSettings;
 			await this.plugin.saveSettings();
-			console.log('Test settings saved');
+			// Test settings saved
 			
 			// Step 4: Reload settings from storage
 			await this.plugin.loadSettings();
-			console.log('Settings reloaded from storage');
+			// Settings reloaded from storage
 			
 			// Step 5: Verify all settings persisted correctly
 			const verificationResults = this.verifySettings(testSettings, this.plugin.settings);
@@ -51,11 +51,11 @@ export class SettingsIntegrationTest {
 			// Step 6: Restore original settings
 			this.plugin.settings = originalSettings;
 			await this.plugin.saveSettings();
-			console.log('Original settings restored');
+			// Original settings restored
 			
 			// Step 7: Report results
 			if (verificationResults.success) {
-				console.log('✓ Settings persistence test PASSED');
+				// Settings persistence test PASSED
 				return true;
 			} else {
 				console.error('✗ Settings persistence test FAILED:', verificationResults.errors);
@@ -100,7 +100,7 @@ export class SettingsIntegrationTest {
 	}
 	
 	async runValidationTest(): Promise<boolean> {
-		console.log('Starting settings validation integration test...');
+		// Starting settings validation integration test
 		
 		try {
 			// Test with invalid settings
@@ -128,7 +128,7 @@ export class SettingsIntegrationTest {
 				return false;
 			}
 			
-			console.log('✓ Settings validation test PASSED');
+			// Settings validation test PASSED
 			return true;
 			
 		} catch (error) {
@@ -138,7 +138,7 @@ export class SettingsIntegrationTest {
 	}
 	
 	async runMigrationTest(): Promise<boolean> {
-		console.log('Starting settings migration integration test...');
+		// Starting settings migration integration test
 		
 		try {
 			// Simulate old settings without version
@@ -167,7 +167,7 @@ export class SettingsIntegrationTest {
 				return false;
 			}
 			
-			console.log('✓ Settings migration test PASSED');
+			// Settings migration test PASSED
 			return true;
 			
 		} catch (error) {
@@ -177,7 +177,7 @@ export class SettingsIntegrationTest {
 	}
 	
 	async runAllTests(): Promise<boolean> {
-		console.log('Running all settings integration tests...');
+		// Running all settings integration tests
 		
 		const results = await Promise.all([
 			this.runPersistenceTest(),
@@ -187,10 +187,14 @@ export class SettingsIntegrationTest {
 		
 		const allPassed = results.every(result => result);
 		
-		console.log(`All settings integration tests ${allPassed ? 'PASSED' : 'FAILED'}`);
+		if (!allPassed) {
+			console.error('Settings integration tests FAILED');
+		}
 		return allPassed;
 	}
 }
 
 // Export for use in development console
-(window as any).SettingsIntegrationTest = SettingsIntegrationTest;
+if (typeof window !== 'undefined') {
+	(window as any).SettingsIntegrationTest = SettingsIntegrationTest;
+}

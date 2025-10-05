@@ -6,7 +6,7 @@ export class SettingsUnitTests {
 	private runner = new TestRunner();
 
 	async runAllTests(): Promise<boolean> {
-		console.log('🧪 Starting Settings Unit Tests');
+		// Starting Settings Unit Tests
 
 		await this.runner.runSuite('Settings Validation', [
 			{ name: 'should validate correct settings', fn: () => this.testValidSettings() },
@@ -383,7 +383,7 @@ export class SettingsUnitTests {
 		// Test with object that will cause validation to fail completely
 		const problematicSettings = {
 			autoRefresh: undefined
-		} as any;
+		} as Partial<HTMLCSSEditorSettings>;
 
 		const result = SettingsValidator.validateSettings(problematicSettings);
 		

@@ -890,8 +890,19 @@ export class HTMLCSSEditorView extends ItemView {
 			} else if (settings.previewBackground === '#1e1e1e') {
 				this.previewFrame.addClass('html-css-editor-preview-bg-dark');
 			} else {
-				// For custom colors, still use inline style as fallback
-				this.previewFrame.style.backgroundColor = settings.previewBackground;
+				// For custom colors, create a dynamic CSS rule
+				const customBgClass = 'html-css-editor-preview-bg-custom';
+				this.previewFrame.removeClass(customBgClass);
+				this.previewFrame.addClass(customBgClass);
+				
+				// Create or update custom CSS rule
+				let styleEl = document.getElementById('html-css-editor-custom-styles');
+				if (!styleEl) {
+					styleEl = document.createElement('style');
+					styleEl.id = 'html-css-editor-custom-styles';
+					document.head.appendChild(styleEl);
+				}
+				styleEl.textContent = `.${customBgClass} { background-color: ${settings.previewBackground} !important; }`;
 			}
 		}
 
@@ -975,10 +986,39 @@ export class HTMLCSSEditorView extends ItemView {
 		// Use requestAnimationFrame for smooth updates
 		requestAnimationFrame(() => {
 			// Always use side-by-side (vertical) layout
-			this.editorPane.style.width = `${editorPercent}%`;
-			this.previewPane.style.width = `${previewPercent}%`;
-			this.editorPane.style.height = '100%';
-			this.previewPane.style.height = '100%';
+			// Remove existing width classes
+			this.editorPane.removeClass('html-css-editor-pane-width-60', 'html-css-editor-pane-width-40');
+			this.previewPane.removeClass('html-css-editor-pane-width-60', 'html-css-editor-pane-width-40');
+			
+			// Apply appropriate width classes based on ratio
+			if (Math.abs(ratio - 0.6) < 0.05) {
+				this.editorPane.addClass('html-css-editor-pane-width-60');
+				this.previewPane.addClass('html-css-editor-pane-width-40');
+			} else {
+				// For custom ratios, create dynamic CSS
+				const customClass = `html-css-editor-custom-ratio-${Math.round(ratio * 100)}`;
+				this.editorPane.removeClass(this.editorPane.className.split(' ').filter(c => c.startsWith('html-css-editor-custom-ratio-')).join(' '));
+				this.previewPane.removeClass(this.previewPane.className.split(' ').filter(c => c.startsWith('html-css-editor-custom-ratio-')).join(' '));
+				
+				this.editorPane.addClass(`${customClass}-editor`);
+				this.previewPane.addClass(`${customClass}-preview`);
+				
+				// Create or update custom CSS rule
+				let styleEl = document.getElementById('html-css-editor-custom-styles');
+				if (!styleEl) {
+					styleEl = document.createElement('style');
+					styleEl.id = 'html-css-editor-custom-styles';
+					document.head.appendChild(styleEl);
+				}
+				const existingContent = styleEl.textContent || '';
+				const newRule = `.${customClass}-editor { width: ${editorPercent}% !important; height: 100% !important; } .${customClass}-preview { width: ${previewPercent}% !important; height: 100% !important; }`;
+				if (!existingContent.includes(newRule)) {
+					styleEl.textContent = existingContent + newRule;
+				}
+			}
+			
+			this.editorPane.addClass('html-css-editor-pane-height-100');
+			this.previewPane.addClass('html-css-editor-pane-height-100');
 
 			// Update resize handle position to match the current ratio
 			this.updateResizeHandlePosition();
@@ -997,8 +1037,30 @@ export class HTMLCSSEditorView extends ItemView {
 		const ratio = this.viewState.editorRatio * 100;
 
 		// Always position for side-by-side layout
-		this.resizeHandle.style.left = `${ratio}%`;
-		this.resizeHandle.style.top = '0';
+		this.resizeHandle.removeClass('html-css-editor-resize-handle-left-60');
+		this.resizeHandle.addClass('html-css-editor-resize-handle-top-0');
+		
+		if (Math.abs(ratio - 60) < 1) {
+			this.resizeHandle.addClass('html-css-editor-resize-handle-left-60');
+		} else {
+			// For custom positions, create dynamic CSS
+			const customClass = `html-css-editor-resize-handle-left-${Math.round(ratio)}`;
+			this.resizeHandle.removeClass(this.resizeHandle.className.split(' ').filter(c => c.startsWith('html-css-editor-resize-handle-left-')).join(' '));
+			this.resizeHandle.addClass(customClass);
+			
+			// Create or update custom CSS rule
+			let styleEl = document.getElementById('html-css-editor-custom-styles');
+			if (!styleEl) {
+				styleEl = document.createElement('style');
+				styleEl.id = 'html-css-editor-custom-styles';
+				document.head.appendChild(styleEl);
+			}
+			const existingContent = styleEl.textContent || '';
+			const newRule = `.${customClass} { left: ${ratio}% !important; }`;
+			if (!existingContent.includes(newRule)) {
+				styleEl.textContent = existingContent + newRule;
+			}
+		}
 	}
 
 	private lastButtonUpdateTime: number = 0;
@@ -2544,7 +2606,7 @@ To load this project: Open HTML/CSS Editor and click "Load Project"
 					.filter(item => item.toLowerCase().includes(query.toLowerCase()))
 					.map(item => ({
 						item,
-						match: { score: 1, matches: [] as any[] }
+						match: { score: 1, matches: [] as any }
 					}));
 			};
 			
@@ -2982,8 +3044,8 @@ To load this project: Open HTML/CSS Editor and click "Load Project"
 				startY = e.clientY;
 				scrollLeft = this.previewFrameContainer.scrollLeft;
 				scrollTop = this.previewFrameContainer.scrollTop;
-				panOverlay.style.cursor = 'grabbing';
-				this.previewFrameContainer.style.cursor = 'grabbing';
+				panOverlay.addClass('html-css-editor-cursor-grabbing');
+				this.previewFrameContainer.addClass('html-css-editor-cursor-grabbing');
 				e.preventDefault();
 				e.stopPropagation();
 			}
@@ -2997,7 +3059,7 @@ To load this project: Open HTML/CSS Editor and click "Load Project"
 				startY = e.clientY;
 				scrollLeft = this.previewFrameContainer.scrollLeft;
 				scrollTop = this.previewFrameContainer.scrollTop;
-				this.previewFrameContainer.style.cursor = 'grabbing';
+				this.previewFrameContainer.addClass('html-css-editor-cursor-grabbing');
 				e.preventDefault();
 				e.stopPropagation();
 			}
@@ -3020,11 +3082,17 @@ To load this project: Open HTML/CSS Editor and click "Load Project"
 		const stopPanning = () => {
 			if (isPanning) {
 				isPanning = false;
-				panOverlay.style.cursor = spacePressed ? 'grab' : 'default';
-				this.previewFrameContainer.style.cursor = spacePressed ? 'grab' : 'default';
-				if (!spacePressed) {
-					panOverlay.style.display = 'none';
-					panOverlay.style.pointerEvents = 'none';
+				panOverlay.removeClass('html-css-editor-cursor-grabbing');
+				this.previewFrameContainer.removeClass('html-css-editor-cursor-grabbing');
+				
+				if (spacePressed) {
+					panOverlay.addClass('html-css-editor-cursor-grab');
+					this.previewFrameContainer.addClass('html-css-editor-cursor-grab');
+				} else {
+					panOverlay.addClass('html-css-editor-cursor-default');
+					this.previewFrameContainer.addClass('html-css-editor-cursor-default');
+					panOverlay.removeClass('html-css-editor-pip-overlay-visible');
+					panOverlay.addClass('html-css-editor-hidden');
 					helpBtn.classList.remove('active');
 				}
 			}
@@ -3315,16 +3383,24 @@ To load this project: Open HTML/CSS Editor and click "Load Project"
 		});
 
 		// Set position and size based on current device
-		this.pipContainer.style.position = 'fixed';
-		this.pipContainer.style.left = '100px';
-		this.pipContainer.style.top = '100px';
-		this.pipContainer.style.width = `${pipWidth}px`;
-		this.pipContainer.style.height = `${pipHeight}px`;
-		this.pipContainer.style.zIndex = '9999';
-		this.pipContainer.style.resize = 'both';
-		this.pipContainer.style.overflow = 'hidden';
-		this.pipContainer.style.minWidth = '200px';
-		this.pipContainer.style.minHeight = '150px';
+		this.pipContainer.addClass('html-css-editor-pip-container-positioned');
+		
+		// Create dynamic CSS for custom size
+		const customSizeClass = `html-css-editor-pip-size-${pipWidth}x${pipHeight}`;
+		this.pipContainer.addClass(customSizeClass);
+		
+		// Create or update custom CSS rule
+		let styleEl = document.getElementById('html-css-editor-custom-styles');
+		if (!styleEl) {
+			styleEl = document.createElement('style');
+			styleEl.id = 'html-css-editor-custom-styles';
+			document.head.appendChild(styleEl);
+		}
+		const existingContent = styleEl.textContent || '';
+		const newRule = `.${customSizeClass} { width: ${pipWidth}px !important; height: ${pipHeight}px !important; }`;
+		if (!existingContent.includes(newRule)) {
+			styleEl.textContent = existingContent + newRule;
+		}
 
 		// Create PiP header
 		const pipHeader = this.pipContainer.createEl('div', {
@@ -3354,14 +3430,14 @@ To load this project: Open HTML/CSS Editor and click "Load Project"
 		});
 
 		// Make PiP content scrollable for panning
-		pipContent.style.overflow = 'auto';
-		pipContent.style.cursor = 'grab';
+		pipContent.addClass('html-css-editor-pip-content');
+		pipContent.addClass('html-css-editor-cursor-grab');
 
 		// Create PiP iframe wrapper for proper sizing
 		const pipFrameWrapper = pipContent.createEl('div', {
 			cls: 'html-css-editor-pip-frame-wrapper'
 		});
-		pipFrameWrapper.style.cssText = 'margin: auto; position: relative;';
+		pipFrameWrapper.addClass('html-css-editor-pip-frame-wrapper');
 
 		// Create PiP iframe
 		this.pipFrame = pipFrameWrapper.createEl('iframe', {
@@ -3382,7 +3458,7 @@ To load this project: Open HTML/CSS Editor and click "Load Project"
 		this.viewState.isPipMode = true;
 
 		// Hide main preview
-		this.previewPane.style.display = 'none';
+		this.previewPane.addClass('html-css-editor-preview-pane-hidden');
 
 		// Update PiP content
 		this.updatePipPreview();
@@ -3407,7 +3483,8 @@ To load this project: Open HTML/CSS Editor and click "Load Project"
 		this.viewState.isPipMode = false;
 
 		// Show main preview
-		this.previewPane.style.display = 'flex';
+		this.previewPane.removeClass('html-css-editor-preview-pane-hidden');
+		this.previewPane.addClass('html-css-editor-display-flex');
 
 		new Notice('Picture-in-Picture mode disabled');
 	}
@@ -4139,7 +4216,7 @@ class FolderSelectionModal extends FuzzySuggestModal<TFolder | null> {
 
 	getItems(): (TFolder | null)[] {
 		const folders = this.app.vault.getAllLoadedFiles()
-			.filter(f => f instanceof TFolder) as TFolder[];
+			.filter((f): f is TFolder => f instanceof TFolder);
 		
 		// Add vault root as first option
 		return [null, ...folders];

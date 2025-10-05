@@ -5,7 +5,7 @@ import { SettingsValidator, DEFAULT_SETTINGS, HTMLCSSEditorSettings } from './se
 
 export class SettingsTestSuite {
 	static runAllTests(): boolean {
-		console.log('Running HTML/CSS Editor Settings Tests...');
+		// Running HTML/CSS Editor Settings Tests
 		
 		let allPassed = true;
 		
@@ -24,7 +24,9 @@ export class SettingsTestSuite {
 		// Test 5: Settings cloning and immutability
 		allPassed = this.testSettingsImmutability() && allPassed;
 		
-		console.log(`Settings tests ${allPassed ? 'PASSED' : 'FAILED'}`);
+		if (!allPassed) {
+			console.error('Settings tests FAILED');
+		}
 		return allPassed;
 	}
 	
@@ -48,7 +50,7 @@ export class SettingsTestSuite {
 				return false;
 			}
 			
-			console.log('✓ Valid settings test passed');
+			// Valid settings test passed
 			return true;
 		} catch (error) {
 			console.error('Valid settings test error:', error);
@@ -75,7 +77,7 @@ export class SettingsTestSuite {
 				return false;
 			}
 			
-			console.log('✓ Invalid settings test passed:', errors.length, 'errors detected');
+			// Invalid settings test passed: ${errors.length} errors detected
 			return true;
 		} catch (error) {
 			console.error('Invalid settings test error:', error);
@@ -112,7 +114,7 @@ export class SettingsTestSuite {
 				return false;
 			}
 			
-			console.log('✓ Migration test passed');
+			// Migration test passed
 			return true;
 		} catch (error) {
 			console.error('Migration test error:', error);
@@ -147,7 +149,7 @@ export class SettingsTestSuite {
 				}
 			}
 			
-			console.log('✓ Color validation test passed');
+			// Color validation test passed
 			return true;
 		} catch (error) {
 			console.error('Color validation test error:', error);
@@ -169,7 +171,7 @@ export class SettingsTestSuite {
 				return false;
 			}
 			
-			console.log('✓ Settings immutability test passed');
+			// Settings immutability test passed
 			return true;
 		} catch (error) {
 			console.error('Settings immutability test error:', error);
@@ -179,4 +181,6 @@ export class SettingsTestSuite {
 }
 
 // Export for use in development console
-(window as any).SettingsTestSuite = SettingsTestSuite;
+if (typeof window !== 'undefined') {
+	(window as any).SettingsTestSuite = SettingsTestSuite;
+}

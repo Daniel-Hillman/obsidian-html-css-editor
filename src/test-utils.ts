@@ -36,17 +36,14 @@ export class TestRunner {
 		const startTime = Date.now();
 		const results: TestResult[] = [];
 
-		console.log(`\n🧪 Running test suite: ${suiteName}`);
+		// Running test suite: ${suiteName}
 
 		for (const test of tests) {
 			const result = await this.runTest(test.name, test.fn);
 			results.push(result);
 			
-			if (result.passed) {
-				console.log(`  ✓ ${result.name} (${result.duration}ms)`);
-			} else {
-				console.error(`  ✗ ${result.name} (${result.duration}ms)`);
-				console.error(`    Error: ${result.error}`);
+			if (!result.passed) {
+				console.error(`Test failed: ${result.name} (${result.duration}ms) - ${result.error}`);
 			}
 		}
 
@@ -57,7 +54,9 @@ export class TestRunner {
 		this.suites.push(suite);
 		
 		const passedCount = results.filter(r => r.passed).length;
-		console.log(`\n📊 Suite ${suiteName}: ${passedCount}/${results.length} tests passed (${duration}ms)`);
+		if (passedCount !== results.length) {
+			console.error(`Suite ${suiteName}: ${passedCount}/${results.length} tests passed (${duration}ms)`);
+		}
 		
 		return suite;
 	}
@@ -74,19 +73,9 @@ export class TestRunner {
 	printSummary(): void {
 		const summary = this.getSummary();
 		
-		console.log('\n' + '='.repeat(50));
-		console.log('📋 TEST SUMMARY');
-		console.log('='.repeat(50));
-		console.log(`Suites: ${summary.passedSuites}/${summary.totalSuites} passed`);
-		console.log(`Tests:  ${summary.passedTests}/${summary.totalTests} passed`);
-		
-		if (summary.passedTests === summary.totalTests) {
-			console.log('🎉 All tests passed!');
-		} else {
-			console.log('❌ Some tests failed');
+		if (summary.passedTests !== summary.totalTests) {
+			console.error(`TEST SUMMARY: ${summary.passedTests}/${summary.totalTests} tests passed, ${summary.passedSuites}/${summary.totalSuites} suites passed`);
 		}
-		
-		console.log('='.repeat(50));
 	}
 
 	clear(): void {

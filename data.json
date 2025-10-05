@@ -1,15 +1,23 @@
 {
-  "autoRefresh": true,
-  "refreshDelay": 300,
-  "fontSize": 14,
-  "lineHeight": 1.4,
-  "showLineNumbers": true,
-  "previewPosition": "vertical",
-  "editorRatio": 0.6,
-  "theme": "inherit",
-  "previewBackground": "#ffffff",
-  "enableAutocomplete": true,
-  "enableCodeFolding": true,
-  "version": 1,
-  "lastUpdated": "2025-10-04T15:47:01.678Z"
+  "viewState_html-css-editor-view": {
+    "htmlContent": "",
+    "cssContent": "",
+    "cursorPosition": 0,
+    "scrollPosition": 0,
+    "isPreviewVisible": true,
+    "layout": "vertical",
+    "editorRatio": 0.6,
+    "zoomLevel": 100,
+    "currentDevice": "desktop",
+    "isPipMode": false,
+    "pipPosition": {
+      "x": 100,
+      "y": 100
+    },
+    "pipSize": {
+      "width": 400,
+      "height": 300
+    },
+    "isSassMode": false
+  }
 }

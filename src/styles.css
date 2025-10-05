@@ -3748,4 +3748,212 @@ view Pan/Drag Styles */
 /* Hidden preview */
 .html-css-editor-pane.html-css-editor-preview-hidden {
     display: none !important;
+}/*
+ CSS classes to replace inline styles */
+.html-css-editor-preview-bg-white {
+    background-color: #ffffff !important;
+}
+
+.html-css-editor-preview-bg-dark {
+    background-color: #1e1e1e !important;
+}
+
+.html-css-editor-pane-width-60 {
+    width: 60% !important;
+}
+
+.html-css-editor-pane-width-40 {
+    width: 40% !important;
+}
+
+.html-css-editor-pane-height-100 {
+    height: 100% !important;
+}
+
+.html-css-editor-resize-handle-left-60 {
+    left: 60% !important;
+}
+
+.html-css-editor-resize-handle-top-0 {
+    top: 0 !important;
+}
+
+.html-css-editor-preview-frame-wrapper-transform {
+    transform-origin: center center !important;
+}
+
+.html-css-editor-pip-container {
+    position: fixed !important;
+    z-index: 9999 !important;
+    resize: both !important;
+    overflow: hidden !important;
+    min-width: 200px !important;
+    min-height: 150px !important;
+}
+
+.html-css-editor-pip-content {
+    overflow: auto !important;
+    cursor: grab !important;
+}
+
+.html-css-editor-pip-frame-wrapper {
+    margin: auto !important;
+    position: relative !important;
+}
+
+.html-css-editor-preview-pane-hidden {
+    display: none !important;
+}
+
+.html-css-editor-pan-overlay-grabbing {
+    cursor: grabbing !important;
+}
+
+.html-css-editor-preview-container-grabbing {
+    cursor: grabbing !important;
+}
+
+.html-css-editor-pan-overlay-grab {
+    cursor: grab !important;
+}
+
+.html-css-editor-preview-container-grab {
+    cursor: grab !important;
+}
+
+.html-css-editor-pan-overlay-hidden {
+    display: none !important;
+    pointer-events: none !important;
+}
+
+/* Dynamic width/height classes for device presets */
+.html-css-editor-device-mobile {
+    width: 375px !important;
+    height: 667px !important;
+}
+
+.html-css-editor-device-tablet {
+    width: 768px !important;
+    height: 1024px !important;
+}
+
+.html-css-editor-device-desktop {
+    width: 1200px !important;
+    height: 800px !important;
+}
+
+.html-css-editor-device-custom {
+    min-width: 200px !important;
+    min-height: 150px !important;
+}
+
+/* Zoom transform classes */
+.html-css-editor-zoom-50 {
+    transform: scale(0.5) !important;
+}
+
+.html-css-editor-zoom-75 {
+    transform: scale(0.75) !important;
+}
+
+.html-css-editor-zoom-100 {
+    transform: scale(1) !important;
+}
+
+.html-css-editor-zoom-125 {
+    transform: scale(1.25) !important;
+}
+
+.html-css-editor-zoom-150 {
+    transform: scale(1.5) !important;
+}
+
+.html-css-editor-zoom-200 {
+    transform: scale(2) !important;
+}
+
+/* Hidden utility class */
+.html-css-editor-hidden {
+    display: none !important;
+}/* Addit
+ional CSS classes for cursor states */
+.html-css-editor-cursor-grabbing {
+    cursor: grabbing !important;
+}
+
+.html-css-editor-cursor-grab {
+    cursor: grab !important;
+}
+
+.html-css-editor-cursor-default {
+    cursor: default !important;
+}
+
+/* PiP overlay styles */
+.html-css-editor-pip-overlay {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    background: rgba(0, 0, 0, 0.1) !important;
+    z-index: 1000 !important;
+    display: none !important;
+    pointer-events: none !important;
+}
+
+.html-css-editor-pip-overlay-visible {
+    display: block !important;
+    pointer-events: all !important;
+}
+
+/* PiP container positioning */
+.html-css-editor-pip-container-positioned {
+    position: fixed !important;
+    left: 100px !important;
+    top: 100px !important;
+    z-index: 9999 !important;
+    resize: both !important;
+    overflow: hidden !important;
+    min-width: 200px !important;
+    min-height: 150px !important;
+}
+
+/* PiP minimized state */
+.html-css-editor-pip-container-minimized {
+    height: 32px !important;
+}
+
+.html-css-editor-pip-content-hidden {
+    display: none !important;
+}
+
+.html-css-editor-pip-content-visible {
+    display: block !important;
+}
+
+/* Dynamic size classes for device presets */
+.html-css-editor-device-size-375x667 {
+    width: 375px !important;
+    height: 667px !important;
+}
+
+.html-css-editor-device-size-768x1024 {
+    width: 768px !important;
+    height: 1024px !important;
+}
+
+.html-css-editor-device-size-1200x800 {
+    width: 1200px !important;
+    height: 800px !important;
+}
+
+/* Transform origin center */
+.html-css-editor-transform-origin-center {
+    transform-origin: center center !important;
+}
+
+/* Flex display utility */
+.html-css-editor-display-flex {
+    display: flex !important;
 }

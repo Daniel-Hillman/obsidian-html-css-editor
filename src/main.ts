@@ -211,13 +211,6 @@ export default class HTMLCSSEditorPlugin extends Plugin {
 				if (!leaf || this.isLeafInSidebar(leaf)) {
 					// Force creation of new tab in main workspace
 					leaf = workspace.getLeaf('tab');
-					
-					// Double-check it's not in sidebar
-					if (this.isLeafInSidebar(leaf)) {
-						// Last resort: detach and recreate
-						leaf.detach();
-						leaf = workspace.getLeaf('tab');
-					}
 				}
 				
 				if (leaf) {
