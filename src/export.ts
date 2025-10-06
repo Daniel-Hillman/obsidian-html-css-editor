@@ -158,9 +158,7 @@ export class ExportHandler {
 		// Create a temporary textarea element
 		const textArea = document.createElement('textarea');
 		textArea.value = text;
-		textArea.style.position = 'fixed';
-		textArea.style.left = '-999999px';
-		textArea.style.top = '-999999px';
+		textArea.className = 'html-css-editor-clipboard-helper';
 		
 		document.body.appendChild(textArea);
 		textArea.focus();

@@ -879,6 +879,216 @@
     color: var(--text-normal);
 }
 
+/* Dynamic width classes for panes */
+.html-css-editor-pane[data-width] {
+    width: var(--pane-width, 50%);
+}
+
+.html-css-editor-resize-handle[data-left] {
+    left: var(--handle-left, 50%);
+}
+
+.html-css-editor-preview-visible {
+    display: flex !important;
+}
+
+.html-css-editor-preview-hidden {
+    display: none !important;
+}
+
+.html-css-editor-resize-handle-visible {
+    display: block !important;
+}
+
+.html-css-editor-resize-handle-hidden {
+    display: none !important;
+}
+
+.html-css-editor-editor-full-width {
+    width: 100% !important;
+}
+
+/* Frame sizing with CSS custom properties */
+.html-css-editor-preview-frame-wrapper {
+    width: var(--frame-width, 100%);
+    height: var(--frame-height, 100%);
+    min-width: var(--frame-min-width, auto);
+}
+
+.html-css-editor-preview-frame-enhanced {
+    width: var(--frame-width, 100%);
+    height: var(--frame-height, 100%);
+}
+
+/* Clipboard helper */
+.html-css-editor-clipboard-helper {
+    position: fixed !important;
+    left: -999999px !important;
+    top: -999999px !important;
+}
+
+/* Animation Builder Styles */
+.animation-search-input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid var(--background-modifier-border);
+    border-radius: 4px;
+    background: var(--background-primary);
+    color: var(--text-normal);
+    margin-bottom: 16px;
+}
+
+.animation-presets-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 12px;
+    max-height: 400px;
+    overflow-y: auto;
+    padding: 4px;
+}
+
+.animation-preset-card {
+    padding: 12px;
+    border: 1px solid var(--background-modifier-border);
+    border-radius: 6px;
+    background: var(--background-primary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.animation-preset-card:hover {
+    background: var(--background-modifier-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.animation-preset-name {
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--text-normal);
+    margin-bottom: 4px;
+}
+
+.animation-preset-category {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 2px 6px;
+    border-radius: 3px;
+    background: var(--interactive-accent);
+    color: var(--text-on-accent);
+    margin-bottom: 8px;
+}
+
+.animation-usage-code {
+    display: block;
+    font-size: 11px;
+    font-family: var(--font-monospace);
+    color: var(--text-muted);
+    background: var(--background-secondary);
+    padding: 4px 6px;
+    border-radius: 3px;
+    margin-top: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.animation-no-results {
+    grid-column: 1 / -1;
+    text-align: center;
+    color: var(--text-muted);
+    font-style: italic;
+    padding: 20px;
+}
+
+.animation-keyframe-input {
+    width: 60px;
+    margin-right: 10px;
+}
+
+.animation-properties-input {
+    flex: 1;
+    margin: 0 10px;
+}
+
+.keyframe-delete {
+    margin-left: 10px;
+    color: var(--text-error);
+}
+
+.animation-preview-container {
+    width: 100%;
+    height: 100px;
+    border: 1px solid var(--background-modifier-border);
+    border-radius: 4px;
+    background: var(--background-secondary);
+    position: relative;
+    overflow: hidden;
+}
+
+.animation-preview-element {
+    width: 40px;
+    height: 40px;
+    background: var(--interactive-accent);
+    border-radius: 4px;
+    position: absolute;
+    top: 50%;
+    left: 20px;
+    transform: translateY(-50%);
+}
+
+.animation-controls {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.animation-builder-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-top: 20px;
+}
+
+.animation-performance-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.animation-performance-table td {
+    padding: 8px;
+    border: 1px solid var(--background-modifier-border);
+}
+
+.animation-fps-poor {
+    color: var(--text-error);
+}
+
+.animation-fps-fair {
+    color: var(--text-warning);
+}
+
+.animation-fps-good {
+    color: var(--text-success);
+}
+
+/* Animation state classes */
+.animation-playing {
+    animation: var(--animation-name, none) var(--animation-duration, 1s) var(--animation-easing, ease) var(--animation-delay, 0s) var(--animation-iterations, 1) var(--animation-direction, normal) var(--animation-fill-mode, none);
+    animation-play-state: running;
+}
+
+.animation-paused {
+    animation-play-state: paused;
+}
+
+.animation-reset {
+    animation: none;
+}
+
 /* Enhanced theme integration for different Obsidian themes */
 .theme-light .html-css-editor-main-container {
     --html-css-editor-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);

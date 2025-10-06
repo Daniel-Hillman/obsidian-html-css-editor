@@ -90,7 +90,7 @@ function createColorDecorations(view: EditorView): DecorationSet {
 export const colorPickerPlugin = ViewPlugin.fromClass(
 	class {
 		decorations: DecorationSet;
-		private updateTimeout: any = null;
+		private updateTimeout: NodeJS.Timeout | null = null;
 
 		constructor(view: EditorView) {
 			this.decorations = createColorDecorations(view);

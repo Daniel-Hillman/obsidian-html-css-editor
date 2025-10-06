@@ -1,12 +1,19 @@
 import { Modal, App, Setting, FuzzySuggestModal } from 'obsidian';
 import { ANIMATION_PRESETS, EASING_FUNCTIONS } from './animationSystem';
 
+interface AnimationPreset {
+	name: string;
+	category: string;
+	usage: string;
+	keyframes: string;
+}
+
 // Animation presets modal - Simplified for better visibility
 export class AnimationPresetsModal extends Modal {
-	private onSubmit: (preset: any) => void;
-	private presets: any[];
+	private onSubmit: (preset: AnimationPreset) => void;
+	private presets: AnimationPreset[];
 
-	constructor(app: App, onSubmit: (preset: any) => void) {
+	constructor(app: App, onSubmit: (preset: AnimationPreset) => void) {
 		super(app);
 		this.onSubmit = onSubmit;
 		this.presets = Object.entries(ANIMATION_PRESETS).map(([key, preset]) => ({
@@ -28,27 +35,11 @@ export class AnimationPresetsModal extends Modal {
 			placeholder: 'Search animations...',
 			cls: 'animation-search-input'
 		});
-		searchInput.style.cssText = `
-			width: 100%;
-			padding: 8px 12px;
-			margin-bottom: 16px;
-			border: 1px solid var(--background-modifier-border);
-			border-radius: 6px;
-			background: var(--background-primary);
-			color: var(--text-normal);
-			font-size: 14px;
-		`;
+		// Styles moved to CSS class 'animation-search-input'
 		
 		// Presets container
 		const presetsContainer = contentEl.createDiv({ cls: 'animation-presets-grid' });
-		presetsContainer.style.cssText = `
-			display: grid;
-			grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-			gap: 12px;
-			max-height: 500px;
-			overflow-y: auto;
-			padding: 4px;
-		`;
+		// Styles moved to CSS class 'animation-presets-grid'
 		
 		// Render all presets
 		const renderPresets = (filter: string = '') => {
@@ -61,72 +52,30 @@ export class AnimationPresetsModal extends Modal {
 			
 			filtered.forEach(preset => {
 				const item = presetsContainer.createDiv({ cls: 'animation-preset-card' });
-				item.style.cssText = `
-					padding: 12px;
-					border: 1px solid var(--background-modifier-border);
-					border-radius: 8px;
-					background: var(--background-primary);
-					cursor: pointer;
-					transition: all 0.2s ease;
-				`;
+				// Styles moved to CSS class 'animation-preset-card'
 				
-				item.addEventListener('mouseenter', () => {
-					item.style.background = 'var(--background-modifier-hover)';
-					item.style.transform = 'translateY(-2px)';
-					item.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)';
-				});
-				
-				item.addEventListener('mouseleave', () => {
-					item.style.background = 'var(--background-primary)';
-					item.style.transform = 'translateY(0)';
-					item.style.boxShadow = 'none';
-				});
+				// Hover effects moved to CSS :hover pseudo-class
 				
 				// Name
 				const name = item.createEl('div', { 
 					text: preset.name,
 					cls: 'animation-preset-name'
 				});
-				name.style.cssText = `
-					font-weight: 600;
-					font-size: 14px;
-					color: var(--text-normal);
-					margin-bottom: 6px;
-				`;
+				// Styles moved to CSS class 'animation-preset-name'
 				
 				// Category badge
 				const category = item.createEl('div', { 
 					text: preset.category,
 					cls: 'animation-preset-category'
 				});
-				category.style.cssText = `
-					display: inline-block;
-					font-size: 10px;
-					padding: 3px 8px;
-					border-radius: 12px;
-					background: var(--interactive-accent);
-					color: var(--text-on-accent);
-					text-transform: uppercase;
-					margin-bottom: 8px;
-				`;
+				// Styles moved to CSS class 'animation-preset-category'
 				
 				// Usage
 				const usage = item.createEl('code', { 
 					text: preset.usage,
 					cls: 'animation-usage-code'
 				});
-				usage.style.cssText = `
-					display: block;
-					font-size: 11px;
-					color: var(--text-muted);
-					background: var(--background-secondary);
-					padding: 4px 6px;
-					border-radius: 4px;
-					margin-top: 8px;
-					overflow: hidden;
-					text-overflow: ellipsis;
-					white-space: nowrap;
-				`;
+				// Styles moved to CSS class 'animation-usage-code'
 				
 				item.addEventListener('click', () => {
 					this.onSubmit(preset);
@@ -138,12 +87,8 @@ export class AnimationPresetsModal extends Modal {
 				presetsContainer.createEl('div', {
 					text: 'No animations found',
 					cls: 'animation-no-results'
-				}).style.cssText = `
-					grid-column: 1 / -1;
-					text-align: center;
-					padding: 40px;
-					color: var(--text-muted);
-				`;
+				});
+				// Styles moved to CSS class 'animation-no-results'
 			}
 		};
 		
@@ -363,7 +308,7 @@ export class AnimationBuilderModal extends Modal {
 				value: keyframe.percent.toString(),
 				attr: { min: '0', max: '100', step: '1' }
 			});
-			percentInput.style.cssText = 'width: 60px; margin-right: 10px;';
+			percentInput.addClass('animation-keyframe-input');
 			percentInput.addEventListener('input', () => {
 				keyframe.percent = parseInt(percentInput.value) || 0;
 				this.shouldAutoPlay = false; // Don't auto-play when editing
@@ -385,7 +330,7 @@ export class AnimationBuilderModal extends Modal {
 				value: keyframe.properties,
 				placeholder: 'transform: translateX(50px); opacity: 0.5;'
 			});
-			propertiesInput.style.cssText = 'flex: 1; margin: 0 10px;';
+			propertiesInput.addClass('animation-properties-input');
 			propertiesInput.addEventListener('input', () => {
 				keyframe.properties = propertiesInput.value;
 				this.shouldAutoPlay = false; // Don't auto-play when editing
@@ -401,7 +346,7 @@ export class AnimationBuilderModal extends Modal {
 					text: '×',
 					cls: 'keyframe-delete'
 				});
-				deleteBtn.style.cssText = 'margin-left: 10px; color: var(--text-error);';
+				deleteBtn.addClass('keyframe-delete');
 				deleteBtn.addEventListener('click', () => {
 					this.keyframes.splice(index, 1);
 					this.renderKeyframes(container);
@@ -416,30 +361,14 @@ export class AnimationBuilderModal extends Modal {
 		previewSection.createEl('h3', { text: 'Preview' });
 
 		const previewContainer = previewSection.createDiv({ cls: 'animation-preview-container' });
-		previewContainer.style.cssText = `
-			width: 100%;
-			height: 100px;
-			border: 1px solid var(--background-modifier-border);
-			border-radius: 4px;
-			position: relative;
-			background: var(--background-secondary);
-			overflow: hidden;
-		`;
+		// Styles moved to CSS class 'animation-preview-container'
 
 		const previewElement = previewContainer.createDiv({ cls: 'animation-preview-element' });
-		previewElement.style.cssText = `
-			width: 40px;
-			height: 40px;
-			background: var(--interactive-accent);
-			border-radius: 4px;
-			position: absolute;
-			top: 30px;
-			left: 20px;
-		`;
+		// Styles moved to CSS class 'animation-preview-element'
 
 		// Control buttons
 		const controls = previewSection.createDiv({ cls: 'animation-controls' });
-		controls.style.cssText = 'display: flex; gap: 10px; margin-top: 10px;';
+		// Styles moved to CSS class 'animation-controls'
 
 		const playBtn = controls.createEl('button', { text: 'Play', cls: 'mod-cta' });
 		const pauseBtn = controls.createEl('button', { text: 'Pause' });
@@ -447,25 +376,36 @@ export class AnimationBuilderModal extends Modal {
 
 		playBtn.addEventListener('click', () => {
 			// Reset and play animation
-			previewElement.style.animation = 'none';
+			previewElement.removeClass('animation-playing');
+			previewElement.addClass('animation-reset');
 			this.isAnimationPaused = false;
 			this.shouldAutoPlay = true;
 			setTimeout(() => {
 				if (this.previewElement) {
-					this.previewElement.style.animation = `${this.animationName} ${this.duration}s ${this.easing} ${this.delay}s ${this.iterations} ${this.direction} ${this.fillMode}`;
-					this.previewElement.style.animationPlayState = 'running';
+					this.previewElement.removeClass('animation-reset');
+					this.previewElement.addClass('animation-playing');
+					this.previewElement.setCssProps({
+						'--animation-name': this.animationName,
+						'--animation-duration': `${this.duration}s`,
+						'--animation-easing': this.easing,
+						'--animation-delay': `${this.delay}s`,
+						'--animation-iterations': this.iterations,
+						'--animation-direction': this.direction,
+						'--animation-fill-mode': this.fillMode
+					});
 				}
 			}, 10);
 		});
 
 		pauseBtn.addEventListener('click', () => {
-			previewElement.style.animationPlayState = 'paused';
+			previewElement.addClass('animation-paused');
 			this.isAnimationPaused = true;
 			this.shouldAutoPlay = false;
 		});
 
 		resetBtn.addEventListener('click', () => {
-			previewElement.style.animation = 'none';
+			previewElement.removeClass('animation-playing', 'animation-paused');
+			previewElement.addClass('animation-reset');
 			this.isAnimationPaused = false;
 			this.shouldAutoPlay = false;
 			setTimeout(() => this.updatePreview(), 10);
@@ -505,15 +445,27 @@ export class AnimationBuilderModal extends Modal {
 		// Only auto-play if not paused and auto-play is enabled
 		if (this.shouldAutoPlay && !this.isAnimationPaused) {
 			// Apply animation
-			this.previewElement.style.animation = 'none';
+			this.previewElement.removeClass('animation-playing');
+			this.previewElement.addClass('animation-reset');
 			setTimeout(() => {
 				if (this.previewElement) {
-					this.previewElement.style.animation = `${this.animationName} ${this.duration}s ${this.easing} ${this.delay}s ${this.iterations} ${this.direction} ${this.fillMode}`;
+					this.previewElement.removeClass('animation-reset');
+					this.previewElement.addClass('animation-playing');
+					this.previewElement.setCssProps({
+						'--animation-name': this.animationName,
+						'--animation-duration': `${this.duration}s`,
+						'--animation-easing': this.easing,
+						'--animation-delay': `${this.delay}s`,
+						'--animation-iterations': this.iterations,
+						'--animation-direction': this.direction,
+						'--animation-fill-mode': this.fillMode
+					});
 				}
 			}, 10);
 		} else {
 			// Just update the CSS without playing
-			this.previewElement.style.animation = 'none';
+			this.previewElement.removeClass('animation-playing');
+			this.previewElement.addClass('animation-reset');
 		}
 	}
 
@@ -533,7 +485,7 @@ ${keyframesCSS}
 
 	private createButtons(container: HTMLElement) {
 		const buttonContainer = container.createDiv({ cls: 'animation-builder-buttons' });
-		buttonContainer.style.cssText = 'display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;';
+		// Styles moved to CSS class 'animation-builder-buttons'
 
 		const cancelBtn = buttonContainer.createEl('button', { text: 'Cancel' });
 		cancelBtn.addEventListener('click', () => this.close());
@@ -660,7 +612,7 @@ export class AnimationInspectorModal extends Modal {
 
 		// Performance table
 		const table = contentEl.createEl('table', { cls: 'animation-performance-table' });
-		table.style.cssText = 'width: 100%; border-collapse: collapse;';
+		// Styles moved to CSS class 'animation-performance-table'
 
 		// Header
 		const header = table.createEl('thead');
@@ -678,11 +630,11 @@ export class AnimationInspectorModal extends Modal {
 			
 			const fpsCell = row.createEl('td', { text: data.fps.toString() });
 			if (data.fps < 30) {
-				fpsCell.style.color = 'var(--text-error)';
+				fpsCell.addClass('animation-fps-poor');
 			} else if (data.fps < 50) {
-				fpsCell.style.color = 'var(--text-warning)';
+				fpsCell.addClass('animation-fps-fair');
 			} else {
-				fpsCell.style.color = 'var(--text-success)';
+				fpsCell.addClass('animation-fps-good');
 			}
 			
 			row.createEl('td', { text: `${(data.duration / 1000).toFixed(1)}s` });

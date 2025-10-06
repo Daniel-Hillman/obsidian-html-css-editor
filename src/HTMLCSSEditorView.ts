@@ -15,6 +15,22 @@ import { colorPickerPlugin } from './colorPicker';
 import { animationInspectorPlugin, AnimationPerformanceMonitor } from './animationSystem';
 import { AnimationPresetsModal, AnimationBuilderModal, AnimationInspectorModal } from './animationBuilder';
 
+interface AnimationPreset {
+	name: string;
+	category: string;
+	usage: string;
+	keyframes: string;
+	key?: string;
+}
+
+interface CompletionItem {
+	label: string;
+	type: string;
+	info?: string;
+	detail?: string;
+	apply?: string;
+}
+
 export const VIEW_TYPE_HTML_CSS_EDITOR = 'html-css-editor-view';
 
 interface ViewState {
@@ -989,8 +1005,8 @@ export class HTMLCSSEditorView extends ItemView {
 		// Use requestAnimationFrame for smooth updates
 		requestAnimationFrame(() => {
 			// Always use side-by-side (vertical) layout
-			this.editorPane.style.width = `${editorPercent}%`;
-			this.previewPane.style.width = `${previewPercent}%`;
+			this.editorPane.setCssProps({ '--pane-width': `${editorPercent}%` });
+			this.previewPane.setCssProps({ '--pane-width': `${previewPercent}%` });
 			
 			// Update resize handle position
 			this.updateResizeHandlePosition();
@@ -1002,7 +1018,7 @@ export class HTMLCSSEditorView extends ItemView {
 		
 		const ratio = this.viewState.editorRatio;
 		const leftPercent = ratio * 100;
-		this.resizeHandle.style.left = `${leftPercent}%`;
+		this.resizeHandle.setCssProps({ '--handle-left': `${leftPercent}%` });
 	}
 
 	private lastButtonUpdateTime: number = 0;
@@ -1145,7 +1161,7 @@ export class HTMLCSSEditorView extends ItemView {
 		}
 	}
 
-	private renderPreviewError(error: any) {
+	private renderPreviewError(error: Error | string) {
 		const errorMessage = error instanceof Error ? error.message : String(error);
 		const errorContent = this.generateErrorContent(errorMessage);
 
@@ -1330,15 +1346,18 @@ export class HTMLCSSEditorView extends ItemView {
 		this.viewState.isPreviewVisible = !this.viewState.isPreviewVisible;
 		
 		if (this.viewState.isPreviewVisible) {
-			this.previewPane.style.display = 'flex';
+			this.previewPane.addClass('html-css-editor-preview-visible');
 			this.previewPane.removeClass('html-css-editor-preview-hidden');
-			this.resizeHandle.style.display = 'block';
+			this.resizeHandle.addClass('html-css-editor-resize-handle-visible');
+			this.resizeHandle.removeClass('html-css-editor-resize-handle-hidden');
+			this.editorPane.removeClass('html-css-editor-editor-full-width');
 		} else {
-			this.previewPane.style.display = 'none';
+			this.previewPane.removeClass('html-css-editor-preview-visible');
 			this.previewPane.addClass('html-css-editor-preview-hidden');
-			this.resizeHandle.style.display = 'none';
+			this.resizeHandle.removeClass('html-css-editor-resize-handle-visible');
+			this.resizeHandle.addClass('html-css-editor-resize-handle-hidden');
 			// Make editor take full width when preview is hidden
-			this.editorPane.style.width = '100%';
+			this.editorPane.addClass('html-css-editor-editor-full-width');
 		}
 		
 		if (this.viewState.isPreviewVisible) {
@@ -1725,7 +1744,7 @@ export class HTMLCSSEditorView extends ItemView {
 			{ label: 'article', type: 'element', info: 'Article content' }
 		];
 
-		let completions: any[] = [];
+		let completions: CompletionItem[] = [];
 
 		// HTML context - check if we're in a tag
 		if (beforeCursor.includes('<') && !beforeCursor.includes('>')) {
@@ -1800,7 +1819,7 @@ export class HTMLCSSEditorView extends ItemView {
 		];
 
 		// Get CSS values based on the property before the colon
-		const getCSSValues = (propertyName: string): any[] => {
+		const getCSSValues = (propertyName: string): CompletionItem[] => {
 			const valueMap: { [key: string]: string[] } = {
 				'display': ['block', 'inline', 'inline-block', 'flex', 'grid', 'none'],
 				'position': ['static', 'relative', 'absolute', 'fixed', 'sticky'],
@@ -1823,7 +1842,7 @@ export class HTMLCSSEditorView extends ItemView {
 			}));
 		};
 
-		let completions: any[] = [];
+		let completions: CompletionItem[] = [];
 
 		// Check if typing a Sass variable
 		if (this.viewState.isSassMode && beforeCursor.endsWith('$')) {
@@ -2311,7 +2330,7 @@ $gutter: 20px;
 		modal.open();
 	}
 
-	private insertAnimationPreset(preset: any) {
+	private insertAnimationPreset(preset: AnimationPreset) {
 		if (this.cssEditor) {
 			const currentContent = this.cssEditor.state.doc.toString();
 			let insertContent = '';
@@ -2532,7 +2551,7 @@ To load this project: Open HTML/CSS Editor and click "Load Project"
 		}
 	}
 
-	private async promptForProjectFile(files: any[]): Promise<any | null> {
+	private async promptForProjectFile(files: TFile[]): Promise<TFile | null> {
 		return new Promise((resolve) => {
 			const modal = new ProjectFileModal(this.app, files, (file) => {
 				resolve(file);
@@ -3149,14 +3168,18 @@ To load this project: Open HTML/CSS Editor and click "Load Project"
 		
 		// Apply to preview frame wrapper
 		if (this.previewFrameWrapper) {
-			this.previewFrameWrapper.style.width = `${newWidth}px`;
-			this.previewFrameWrapper.style.height = `${newHeight}px`;
+			this.previewFrameWrapper.setCssProps({ 
+				'--frame-width': `${newWidth}px`,
+				'--frame-height': `${newHeight}px`
+			});
 		}
 		
 		// Apply to preview frame itself
 		if (this.previewFrame) {
-			this.previewFrame.style.width = `${newWidth}px`;
-			this.previewFrame.style.height = `${newHeight}px`;
+			this.previewFrame.setCssProps({ 
+				'--frame-width': `${newWidth}px`,
+				'--frame-height': `${newHeight}px`
+			});
 		}
 		
 		// Update device to custom with new dimensions
@@ -3171,10 +3194,11 @@ To load this project: Open HTML/CSS Editor and click "Load Project"
 		this.viewState.currentDevice = 'custom';
 		
 		if (this.previewFrameWrapper) {
-			this.previewFrameWrapper.style.width = `${width}px`;
-			this.previewFrameWrapper.style.height = `${height}px`;
-			// Ensure custom sizes don't shrink below their set dimensions
-			this.previewFrameWrapper.style.minWidth = `${width}px`;
+			this.previewFrameWrapper.setCssProps({ 
+				'--frame-width': `${width}px`,
+				'--frame-height': `${height}px`,
+				'--frame-min-width': `${width}px`
+			});
 			this.previewFrameWrapper.style.minHeight = `${height}px`;
 		}
 		
@@ -4002,7 +4026,7 @@ To load this project: Open HTML/CSS Editor and click "Load Project"
 	// Store reference to zoom level display
 	private zoomLevelDisplay: HTMLElement | null = null;
 
-	private handleError(context: string, error: any) {
+	private handleError(context: string, error: Error | string) {
 		const errorMessage = error instanceof Error ? error.message : String(error);
 		console.error(`HTML/CSS Editor View Error [${context}]:`, error);
 
