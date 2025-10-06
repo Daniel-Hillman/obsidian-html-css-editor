@@ -171,7 +171,7 @@ export class SettingsValidator {
 		}
 	}
 
-	static migrateSettings(settings: any): HTMLCSSEditorSettings {
+	static migrateSettings(settings: unknown): HTMLCSSEditorSettings {
 		try {
 			// Handle null or undefined settings
 			if (!settings || typeof settings !== 'object') {
@@ -180,18 +180,19 @@ export class SettingsValidator {
 			}
 
 			// Check if migration is needed
-			const currentVersion = settings.version || 0;
+			const settingsObj = settings as Record<string, unknown>;
+			const currentVersion = (settingsObj.version as number) || 0;
 			const latestVersion = DEFAULT_SETTINGS.version;
 
 			if (currentVersion === latestVersion) {
 				// No migration needed, just validate
-				return this.validateSettings(settings);
+				return this.validateSettings(settingsObj);
 			}
 
 			// Migrating settings to latest version
 
 			// Perform version-specific migrations
-			let migratedSettings = { ...settings };
+			let migratedSettings = { ...settingsObj };
 
 			// Migration from version 0 (no version) to version 1
 			if (currentVersion < 1) {
@@ -204,8 +205,8 @@ export class SettingsValidator {
 			// }
 
 			// Set the new version
-			migratedSettings.version = latestVersion;
-			migratedSettings.lastUpdated = new Date().toISOString();
+			(migratedSettings as Record<string, unknown>).version = latestVersion;
+			(migratedSettings as Record<string, unknown>).lastUpdated = new Date().toISOString();
 
 			// Validate the migrated settings
 			const validatedSettings = this.validateSettings(migratedSettings);
@@ -219,7 +220,7 @@ export class SettingsValidator {
 		}
 	}
 
-	private static migrateToVersion1(settings: any): any {
+	private static migrateToVersion1(settings: Record<string, unknown>): Record<string, unknown> {
 		// Migration logic for version 1
 		// This is the first version, so we just ensure all required fields exist
 		const migrated = { ...settings };
@@ -588,7 +589,7 @@ export class HTMLCSSEditorSettingTab extends PluginSettingTab {
 				}));
 	}
 
-	private async updateSetting(key: keyof HTMLCSSEditorSettings, value: any) {
+	private async updateSetting(key: keyof HTMLCSSEditorSettings, value: unknown) {
 		try {
 			// Create a test settings object to validate the change
 			const testSettings = { ...this.plugin.settings, [key]: value };
@@ -735,7 +736,7 @@ export class HTMLCSSEditorSettingTab extends PluginSettingTab {
 			}
 
 			// Parse the JSON
-			let importedSettings: any;
+			let importedSettings: unknown;
 			try {
 				importedSettings = JSON.parse(this.pendingImportData);
 			} catch (parseError) {
@@ -788,7 +789,7 @@ export class HTMLCSSEditorSettingTab extends PluginSettingTab {
 		}
 	}
 
-	private handleError(context: string, error: any) {
+	private handleError(context: string, error: Error | string) {
 		const errorMessage = error instanceof Error ? error.message : String(error);
 		console.error(`HTML/CSS Editor Settings Error [${context}]:`, error);
 		

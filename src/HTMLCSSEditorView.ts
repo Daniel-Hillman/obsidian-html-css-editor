@@ -1005,8 +1005,8 @@ export class HTMLCSSEditorView extends ItemView {
 		// Use requestAnimationFrame for smooth updates
 		requestAnimationFrame(() => {
 			// Always use side-by-side (vertical) layout
-			this.editorPane.setCssProps({ '--pane-width': `${editorPercent}%` });
-			this.previewPane.setCssProps({ '--pane-width': `${previewPercent}%` });
+			this.editorPane.style.setProperty('--pane-width', `${editorPercent}%`);
+			this.previewPane.style.setProperty('--pane-width', `${previewPercent}%`);
 			
 			// Update resize handle position
 			this.updateResizeHandlePosition();
@@ -1018,7 +1018,7 @@ export class HTMLCSSEditorView extends ItemView {
 		
 		const ratio = this.viewState.editorRatio;
 		const leftPercent = ratio * 100;
-		this.resizeHandle.setCssProps({ '--handle-left': `${leftPercent}%` });
+		this.resizeHandle.style.setProperty('--handle-left', `${leftPercent}%`);
 	}
 
 	private lastButtonUpdateTime: number = 0;
@@ -3168,18 +3168,14 @@ To load this project: Open HTML/CSS Editor and click "Load Project"
 		
 		// Apply to preview frame wrapper
 		if (this.previewFrameWrapper) {
-			this.previewFrameWrapper.setCssProps({ 
-				'--frame-width': `${newWidth}px`,
-				'--frame-height': `${newHeight}px`
-			});
+			this.previewFrameWrapper.style.setProperty('--frame-width', `${newWidth}px`);
+			this.previewFrameWrapper.style.setProperty('--frame-height', `${newHeight}px`);
 		}
 		
 		// Apply to preview frame itself
 		if (this.previewFrame) {
-			this.previewFrame.setCssProps({ 
-				'--frame-width': `${newWidth}px`,
-				'--frame-height': `${newHeight}px`
-			});
+			this.previewFrame.style.setProperty('--frame-width', `${newWidth}px`);
+			this.previewFrame.style.setProperty('--frame-height', `${newHeight}px`);
 		}
 		
 		// Update device to custom with new dimensions
@@ -3194,18 +3190,16 @@ To load this project: Open HTML/CSS Editor and click "Load Project"
 		this.viewState.currentDevice = 'custom';
 		
 		if (this.previewFrameWrapper) {
-			this.previewFrameWrapper.setCssProps({ 
-				'--frame-width': `${width}px`,
-				'--frame-height': `${height}px`,
-				'--frame-min-width': `${width}px`
-			});
-			this.previewFrameWrapper.style.minHeight = `${height}px`;
+			this.previewFrameWrapper.style.setProperty('--frame-width', `${width}px`);
+			this.previewFrameWrapper.style.setProperty('--frame-height', `${height}px`);
+			this.previewFrameWrapper.style.setProperty('--frame-min-width', `${width}px`);
+			this.previewFrameWrapper.style.setProperty('--frame-min-height', `${height}px`);
 		}
 		
 		// Also set the iframe size to match
 		if (this.previewFrame) {
-			this.previewFrame.style.width = `${width}px`;
-			this.previewFrame.style.height = `${height}px`;
+			this.previewFrame.style.setProperty('--frame-width', `${width}px`);
+			this.previewFrame.style.setProperty('--frame-height', `${height}px`);
 		}
 		
 		this.updateDevicePreset();
@@ -3286,16 +3280,16 @@ To load this project: Open HTML/CSS Editor and click "Load Project"
 		
 		if (width && height && this.previewFrameWrapper) {
 			// Set the frame wrapper size
-			this.previewFrameWrapper.style.width = `${width}px`;
-			this.previewFrameWrapper.style.height = `${height}px`;
+			this.previewFrameWrapper.style.setProperty('--frame-width', `${width}px`);
+			this.previewFrameWrapper.style.setProperty('--frame-height', `${height}px`);
 			// Ensure dimensions don't shrink below set size
-			this.previewFrameWrapper.style.minWidth = `${width}px`;
-			this.previewFrameWrapper.style.minHeight = `${height}px`;
+			this.previewFrameWrapper.style.setProperty('--frame-min-width', `${width}px`);
+			this.previewFrameWrapper.style.setProperty('--frame-min-height', `${height}px`);
 			
 			// Also set the iframe size to match
 			if (this.previewFrame) {
-				this.previewFrame.style.width = `${width}px`;
-				this.previewFrame.style.height = `${height}px`;
+				this.previewFrame.style.setProperty('--frame-width', `${width}px`);
+				this.previewFrame.style.setProperty('--frame-height', `${height}px`);
 			}
 		}
 		
@@ -3310,14 +3304,14 @@ To load this project: Open HTML/CSS Editor and click "Load Project"
 			this.previewFrameWrapper.className = `html-css-editor-preview-frame-wrapper ${deviceClass} zoom-${this.zoomLevel}`;
 			// Apply zoom via transform
 			const scale = this.zoomLevel / 100;
-			this.previewFrameWrapper.style.transform = `scale(${scale})`;
-			this.previewFrameWrapper.style.transformOrigin = 'center center';
+			this.previewFrameWrapper.style.setProperty('--zoom-scale', scale.toString());
+			this.previewFrameWrapper.addClass('html-css-editor-zoomed');
 		}
 
 		// Update PiP if active
 		if (this.pipFrame && this.pipContainer) {
-			this.pipFrame.style.transform = `scale(${this.zoomLevel / 100})`;
-			this.pipFrame.style.transformOrigin = 'center center';
+			this.pipFrame.style.setProperty('--zoom-scale', (this.zoomLevel / 100).toString());
+			this.pipFrame.addClass('html-css-editor-zoomed');
 		}
 		
 		// Update zoom display
@@ -3482,16 +3476,14 @@ To load this project: Open HTML/CSS Editor and click "Load Project"
 	private minimizePiP() {
 		if (!this.pipContainer) return;
 
-		const isMinimized = this.pipContainer.style.height === '32px';
+		const isMinimized = this.pipContainer.classList.contains('html-css-editor-pip-minimized');
 
 		if (isMinimized) {
 			// Restore
-			this.pipContainer.style.height = `${this.viewState.pipSize.height}px`;
-			this.pipContainer.querySelector('.html-css-editor-pip-content')?.setAttribute('style', 'display: block');
+			this.pipContainer.removeClass('html-css-editor-pip-minimized');
 		} else {
 			// Minimize
-			this.pipContainer.style.height = '32px';
-			this.pipContainer.querySelector('.html-css-editor-pip-content')?.setAttribute('style', 'display: none');
+			this.pipContainer.addClass('html-css-editor-pip-minimized');
 		}
 	}
 
@@ -3507,16 +3499,7 @@ To load this project: Open HTML/CSS Editor and click "Load Project"
 		const pipOverlay = pipContent.createEl('div', {
 			cls: 'html-css-editor-pip-overlay'
 		});
-		pipOverlay.style.cssText = `
-			position: absolute;
-			top: 0;
-			left: 0;
-			right: 0;
-			bottom: 0;
-			z-index: 1000;
-			pointer-events: none;
-			display: none;
-		`;
+		// Styles moved to CSS class
 
 		// Track spacebar for PiP - only when NOT typing in code editors
 		const handleKeyDown = (e: KeyboardEvent) => {
@@ -3536,10 +3519,7 @@ To load this project: Open HTML/CSS Editor and click "Load Project"
 
 			if (e.code === 'Space' && !spacePressed && !isPanning) {
 				spacePressed = true;
-				pipOverlay.style.display = 'block';
-				pipOverlay.style.pointerEvents = 'all';
-				pipOverlay.style.cursor = 'grab';
-				pipContent.style.cursor = 'grab';
+				pipContent.addClass('html-css-editor-pip-panning');
 				e.preventDefault();
 			}
 		};
@@ -3562,9 +3542,7 @@ To load this project: Open HTML/CSS Editor and click "Load Project"
 			if (e.code === 'Space') {
 				spacePressed = false;
 				if (!isPanning) {
-					pipOverlay.style.display = 'none';
-					pipOverlay.style.pointerEvents = 'none';
-					pipContent.style.cursor = 'default';
+					pipContent.removeClass('html-css-editor-pip-panning');
 				}
 			}
 		};
@@ -3580,8 +3558,7 @@ To load this project: Open HTML/CSS Editor and click "Load Project"
 				startY = e.clientY;
 				scrollLeft = pipContent.scrollLeft;
 				scrollTop = pipContent.scrollTop;
-				pipOverlay.style.cursor = 'grabbing';
-				pipContent.style.cursor = 'grabbing';
+				pipContent.addClass('html-css-editor-pip-active');
 				e.preventDefault();
 				e.stopPropagation();
 			}
@@ -3595,7 +3572,7 @@ To load this project: Open HTML/CSS Editor and click "Load Project"
 				startY = e.clientY;
 				scrollLeft = pipContent.scrollLeft;
 				scrollTop = pipContent.scrollTop;
-				pipContent.style.cursor = 'grabbing';
+				pipContent.addClass('html-css-editor-pip-active');
 				e.preventDefault();
 				e.stopPropagation();
 			}
@@ -3618,11 +3595,9 @@ To load this project: Open HTML/CSS Editor and click "Load Project"
 		const stopPanning = () => {
 			if (isPanning) {
 				isPanning = false;
-				pipOverlay.style.cursor = spacePressed ? 'grab' : 'default';
-				pipContent.style.cursor = spacePressed ? 'grab' : 'default';
+				pipContent.removeClass('html-css-editor-pip-active');
 				if (!spacePressed) {
-					pipOverlay.style.display = 'none';
-					pipOverlay.style.pointerEvents = 'none';
+					pipContent.removeClass('html-css-editor-pip-panning');
 				}
 			}
 		};
@@ -3703,7 +3678,9 @@ To load this project: Open HTML/CSS Editor and click "Load Project"
 				const newTop = Math.max(0, Math.min(maxTop, startTop + deltaY));
 
 				// Use transform for better performance
-				this.pipContainer.style.transform = `translate(${newLeft - startLeft}px, ${newTop - startTop}px)`;
+				this.pipContainer.style.setProperty('--pip-translate-x', `${newLeft - startLeft}px`);
+				this.pipContainer.style.setProperty('--pip-translate-y', `${newTop - startTop}px`);
+				this.pipContainer.addClass('html-css-editor-pip-translating');
 			});
 		};
 
@@ -3721,12 +3698,11 @@ To load this project: Open HTML/CSS Editor and click "Load Project"
 
 					this.pipContainer.style.left = `${startLeft + deltaX}px`;
 					this.pipContainer.style.top = `${startTop + deltaY}px`;
-					this.pipContainer.style.transform = '';
+					this.pipContainer.removeClass('html-css-editor-pip-translating');
 				}
 
-				this.pipContainer.classList.remove('dragging');
-				document.body.style.userSelect = '';
-				document.body.style.cursor = '';
+				this.pipContainer.removeClass('html-css-editor-pip-dragging');
+				document.body.removeClass('html-css-editor-pip-dragging');
 
 				// Clean up event listeners
 				document.removeEventListener('mousemove', handleMouseMove);
@@ -3755,9 +3731,8 @@ To load this project: Open HTML/CSS Editor and click "Load Project"
 			startLeft = rect.left;
 			startTop = rect.top;
 
-			this.pipContainer!.classList.add('dragging');
-			document.body.style.userSelect = 'none';
-			document.body.style.cursor = 'grabbing';
+			this.pipContainer!.addClass('html-css-editor-pip-dragging');
+			document.body.addClass('html-css-editor-pip-dragging');
 
 			// Add event listeners
 			document.addEventListener('mousemove', handleMouseMove);
@@ -3820,8 +3795,8 @@ To load this project: Open HTML/CSS Editor and click "Load Project"
 			startLeft = rect.left;
 			startTop = rect.top;
 
-			this.pipContainer.classList.add('resizing');
-			document.body.style.userSelect = 'none';
+			this.pipContainer.addClass('html-css-editor-pip-resizing');
+			document.body.addClass('html-css-editor-pip-resizing');
 			document.body.style.cursor = handle.style.cursor;
 			e.preventDefault();
 			e.stopPropagation();

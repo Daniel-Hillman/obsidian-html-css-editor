@@ -241,7 +241,7 @@ export default class HTMLCSSEditorPlugin extends Plugin {
 		return parent === this.app.workspace.leftSplit || parent === this.app.workspace.rightSplit;
 	}
 
-	private handleError(context: string, error: any) {
+	private handleError(context: string, error: Error | string) {
 		const errorMessage = error instanceof Error ? error.message : String(error);
 		console.error(`HTML/CSS Editor Plugin Error [${context}]:`, error);
 		

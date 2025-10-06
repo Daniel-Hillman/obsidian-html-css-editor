@@ -514,6 +514,7 @@
     z-index: 10;
     transition: background-color 0.2s ease;
     top: 0;
+    left: var(--handle-left, 50%);
     transform: translateX(-50%);
 }
 
@@ -880,13 +881,11 @@
 }
 
 /* Dynamic width classes for panes */
-.html-css-editor-pane[data-width] {
+.html-css-editor-pane {
     width: var(--pane-width, 50%);
 }
 
-.html-css-editor-resize-handle[data-left] {
-    left: var(--handle-left, 50%);
-}
+
 
 .html-css-editor-preview-visible {
     display: flex !important;
@@ -913,6 +912,7 @@
     width: var(--frame-width, 100%);
     height: var(--frame-height, 100%);
     min-width: var(--frame-min-width, auto);
+    min-height: var(--frame-min-height, auto);
 }
 
 .html-css-editor-preview-frame-enhanced {
@@ -1088,6 +1088,167 @@
 .animation-reset {
     animation: none;
 }
+
+/* Color Picker Styles */
+.cm-color-swatch {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 2px;
+    border: 1px solid var(--background-modifier-border);
+    margin: 0 2px;
+    cursor: pointer;
+    vertical-align: middle;
+}
+
+.cm-color-picker-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cm-color-picker {
+    background: var(--background-primary);
+    border: 1px solid var(--background-modifier-border);
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    min-width: 300px;
+}
+
+.cm-color-picker h3 {
+    margin: 0 0 15px 0;
+    color: var(--text-normal);
+}
+
+.cm-color-picker-color-input {
+    width: 100%;
+    height: 50px;
+    border: 1px solid var(--background-modifier-border);
+    border-radius: 4px;
+    cursor: pointer;
+    margin-bottom: 15px;
+}
+
+.cm-color-picker-text-input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid var(--background-modifier-border);
+    border-radius: 4px;
+    background: var(--background-primary);
+    color: var(--text-normal);
+    font-family: var(--font-monospace);
+    margin-bottom: 15px;
+}
+
+.cm-color-picker-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+.cm-color-picker-cancel-btn {
+    padding: 8px 16px;
+    border: 1px solid var(--background-modifier-border);
+    border-radius: 4px;
+    background: var(--background-primary);
+    color: var(--text-normal);
+    cursor: pointer;
+}
+
+.cm-color-picker-apply-btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    background: var(--interactive-accent);
+    color: var(--text-on-accent);
+    cursor: pointer;
+}
+
+.cm-color-picker-temp-element {
+    position: absolute;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+/* PiP Overlay */
+.html-css-editor-pip-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    z-index: 1000;
+    display: none;
+    pointer-events: none;
+}
+
+/* PiP States */
+.html-css-editor-pip-minimized {
+    height: 32px !important;
+}
+
+.html-css-editor-pip-minimized .html-css-editor-pip-content {
+    display: none !important;
+}
+
+.html-css-editor-pip-dragging {
+    user-select: none;
+    cursor: grabbing;
+}
+
+.html-css-editor-pip-resizing {
+    user-select: none;
+}
+
+.html-css-editor-pip-panning .html-css-editor-pip-overlay {
+    display: block !important;
+    pointer-events: all !important;
+    cursor: grab;
+}
+
+.html-css-editor-pip-panning.html-css-editor-pip-active .html-css-editor-pip-overlay {
+    cursor: grabbing;
+}
+
+.html-css-editor-pip-panning .html-css-editor-pip-content {
+    cursor: grab;
+}
+
+.html-css-editor-pip-panning.html-css-editor-pip-active .html-css-editor-pip-content {
+    cursor: grabbing;
+}
+
+/* PiP Transform */
+.html-css-editor-pip-translating {
+    transform: translate(var(--pip-translate-x, 0), var(--pip-translate-y, 0));
+}
+
+/* Body states during PiP operations */
+body.html-css-editor-pip-dragging {
+    user-select: none;
+    cursor: grabbing;
+}
+
+body.html-css-editor-pip-resizing {
+    user-select: none;
+}
+
+/* Zoom transform */
+.html-css-editor-zoomed {
+    transform: scale(var(--zoom-scale, 1));
+    transform-origin: center center;
+}
+
+
 
 /* Enhanced theme integration for different Obsidian themes */
 .theme-light .html-css-editor-main-container {
@@ -2267,6 +2428,33 @@ ngs validation and enhancement styles */
 .html-css-editor-preview-frame-wrapper.desktop {
     width: 1200px;
     height: 800px;
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.html-css-editor-preview-frame-wrapper.iphone-14 {
+    width: 390px;
+    height: 844px;
+    border: 2px solid var(--background-modifier-border);
+    border-radius: 20px;
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.html-css-editor-preview-frame-wrapper.iphone-14-pro-max {
+    width: 430px;
+    height: 932px;
+    border: 2px solid var(--background-modifier-border);
+    border-radius: 20px;
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.html-css-editor-preview-frame-wrapper.ipad-pro {
+    width: 1024px;
+    height: 1366px;
+    border: 2px solid var(--background-modifier-border);
+    border-radius: 12px;
     max-width: 100%;
     max-height: 100%;
 }

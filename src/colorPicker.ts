@@ -22,19 +22,7 @@ class ColorSwatchWidget extends WidgetType {
 	toDOM() {
 		const swatch = document.createElement('span');
 		swatch.className = 'cm-color-swatch';
-		swatch.style.cssText = `
-			display: inline-block;
-			width: 12px;
-			height: 12px;
-			border-radius: 2px;
-			border: 1px solid rgba(0,0,0,0.2);
-			margin: 0 2px 0 4px;
-			vertical-align: middle;
-			cursor: pointer;
-			background-color: ${this.color};
-			position: relative;
-			z-index: 1;
-		`;
+		swatch.style.backgroundColor = this.color;
 		swatch.title = `Click to edit color: ${this.color}`;
 		return swatch;
 	}
@@ -142,64 +130,30 @@ function showColorPicker(view: EditorView, currentColor: string, swatchEl: HTMLE
 	// Create color picker overlay
 	const overlay = document.createElement('div');
 	overlay.className = 'cm-color-picker-overlay';
-	overlay.style.cssText = `
-		position: fixed;
-		top: 0;
-		left: 0;
-		right: 0;
-		bottom: 0;
-		background: rgba(0,0,0,0.3);
-		z-index: 10000;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-	`;
+	// Styles moved to CSS class
 
 	const picker = document.createElement('div');
 	picker.className = 'cm-color-picker';
-	picker.style.cssText = `
-		background: var(--background-primary);
-		border: 1px solid var(--background-modifier-border);
-		border-radius: 8px;
-		padding: 20px;
-		box-shadow: 0 8px 24px rgba(0,0,0,0.3);
-		min-width: 280px;
-	`;
+	// Styles moved to CSS class
 
 	// Title
 	const title = document.createElement('h3');
 	title.textContent = 'Pick a Color';
-	title.style.cssText = 'margin: 0 0 15px 0; color: var(--text-normal);';
+	// Styles moved to CSS class
 	picker.appendChild(title);
 
 	// Color input
 	const colorInput = document.createElement('input');
 	colorInput.type = 'color';
 	colorInput.value = normalizeColorToHex(currentColor);
-	colorInput.style.cssText = `
-		width: 100%;
-		height: 50px;
-		border: none;
-		border-radius: 4px;
-		cursor: pointer;
-		margin-bottom: 15px;
-	`;
+	colorInput.className = 'cm-color-picker-color-input';
 	picker.appendChild(colorInput);
 
 	// Text input for manual entry
 	const textInput = document.createElement('input');
 	textInput.type = 'text';
 	textInput.value = currentColor;
-	textInput.style.cssText = `
-		width: 100%;
-		padding: 8px;
-		border: 1px solid var(--background-modifier-border);
-		border-radius: 4px;
-		background: var(--background-primary);
-		color: var(--text-normal);
-		font-family: monospace;
-		margin-bottom: 15px;
-	`;
+	textInput.className = 'cm-color-picker-text-input';
 	picker.appendChild(textInput);
 
 	// Sync inputs
@@ -218,31 +172,16 @@ function showColorPicker(view: EditorView, currentColor: string, swatchEl: HTMLE
 
 	// Buttons
 	const buttons = document.createElement('div');
-	buttons.style.cssText = 'display: flex; gap: 10px; justify-content: flex-end;';
+	buttons.className = 'cm-color-picker-buttons';
 
 	const cancelBtn = document.createElement('button');
 	cancelBtn.textContent = 'Cancel';
-	cancelBtn.style.cssText = `
-		padding: 8px 16px;
-		border: 1px solid var(--background-modifier-border);
-		border-radius: 4px;
-		background: var(--background-primary);
-		color: var(--text-normal);
-		cursor: pointer;
-	`;
+	cancelBtn.className = 'cm-color-picker-cancel-btn';
 	cancelBtn.addEventListener('click', () => overlay.remove());
 
 	const applyBtn = document.createElement('button');
 	applyBtn.textContent = 'Apply';
-	applyBtn.style.cssText = `
-		padding: 8px 16px;
-		border: none;
-		border-radius: 4px;
-		background: var(--interactive-accent);
-		color: var(--text-on-accent);
-		cursor: pointer;
-		font-weight: 500;
-	`;
+	applyBtn.className = 'cm-color-picker-apply-btn';
 	applyBtn.addEventListener('click', () => {
 		replaceColorInEditor(view, currentColor, textInput.value);
 		overlay.remove();
@@ -291,6 +230,7 @@ function replaceColorInEditor(view: EditorView, oldColor: string, newColor: stri
 function normalizeColorToHex(color: string): string {
 	// Create a temporary element to let the browser parse the color
 	const temp = document.createElement('div');
+	temp.className = 'cm-color-picker-temp-element';
 	temp.style.color = color;
 	document.body.appendChild(temp);
 	const computed = getComputedStyle(temp).color;

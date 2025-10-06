@@ -384,15 +384,13 @@ export class AnimationBuilderModal extends Modal {
 				if (this.previewElement) {
 					this.previewElement.removeClass('animation-reset');
 					this.previewElement.addClass('animation-playing');
-					this.previewElement.setCssProps({
-						'--animation-name': this.animationName,
-						'--animation-duration': `${this.duration}s`,
-						'--animation-easing': this.easing,
-						'--animation-delay': `${this.delay}s`,
-						'--animation-iterations': this.iterations,
-						'--animation-direction': this.direction,
-						'--animation-fill-mode': this.fillMode
-					});
+					this.previewElement.style.setProperty('--animation-name', this.animationName);
+					this.previewElement.style.setProperty('--animation-duration', `${this.duration}s`);
+					this.previewElement.style.setProperty('--animation-easing', this.easing);
+					this.previewElement.style.setProperty('--animation-delay', `${this.delay}s`);
+					this.previewElement.style.setProperty('--animation-iterations', this.iterations);
+					this.previewElement.style.setProperty('--animation-direction', this.direction);
+					this.previewElement.style.setProperty('--animation-fill-mode', this.fillMode);
 				}
 			}, 10);
 		});
@@ -451,15 +449,13 @@ export class AnimationBuilderModal extends Modal {
 				if (this.previewElement) {
 					this.previewElement.removeClass('animation-reset');
 					this.previewElement.addClass('animation-playing');
-					this.previewElement.setCssProps({
-						'--animation-name': this.animationName,
-						'--animation-duration': `${this.duration}s`,
-						'--animation-easing': this.easing,
-						'--animation-delay': `${this.delay}s`,
-						'--animation-iterations': this.iterations,
-						'--animation-direction': this.direction,
-						'--animation-fill-mode': this.fillMode
-					});
+					this.previewElement.style.setProperty('--animation-name', this.animationName);
+					this.previewElement.style.setProperty('--animation-duration', `${this.duration}s`);
+					this.previewElement.style.setProperty('--animation-easing', this.easing);
+					this.previewElement.style.setProperty('--animation-delay', `${this.delay}s`);
+					this.previewElement.style.setProperty('--animation-iterations', this.iterations);
+					this.previewElement.style.setProperty('--animation-direction', this.direction);
+					this.previewElement.style.setProperty('--animation-fill-mode', this.fillMode);
 				}
 			}, 10);
 		} else {

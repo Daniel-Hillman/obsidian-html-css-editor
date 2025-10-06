@@ -255,7 +255,7 @@ export class ExportHandler {
 		return { canExport: true };
 	}
 
-	private handleError(context: string, error: any): void {
+	private handleError(context: string, error: Error | string): void {
 		const errorMessage = error instanceof Error ? error.message : String(error);
 		console.error(`HTML/CSS Editor Export Error [${context}]:`, error);
 		
