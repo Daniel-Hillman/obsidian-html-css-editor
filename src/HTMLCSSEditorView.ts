@@ -1,8 +1,8 @@
 import { ItemView, WorkspaceLeaf, Notice, Menu, Modal, FuzzySuggestModal, TFolder, TFile, App, Setting } from 'obsidian';
 import HTMLCSSEditorPlugin from './main';
 import { ExportHandler } from './export';
-import { EditorView, keymap, lineNumbers, highlightActiveLine, tooltips } from '@codemirror/view';
-import { EditorState, Extension } from '@codemirror/state';
+import { EditorView, keymap, lineNumbers, highlightActiveLine, tooltips, KeyBinding } from '@codemirror/view';
+import { EditorState, Extension, Transaction } from '@codemirror/state';
 import { html } from '@codemirror/lang-html';
 import { css } from '@codemirror/lang-css';
 import { autocompletion, completionKeymap, CompletionContext, CompletionResult, startCompletion, acceptCompletion, closeCompletion } from '@codemirror/autocomplete';
@@ -668,11 +668,33 @@ export class HTMLCSSEditorView extends ItemView {
 			}),
 
 			// Enhanced key bindings with advanced shortcuts
+			// Custom bindings MUST come before defaultKeymap to take precedence
 			keymap.of([
-				...defaultKeymap,
-				...historyKeymap,
-				...completionKeymap,
-				indentWithTab,
+				// Numeric value scrubbing with arrow keys (before defaults)
+				{
+					key: 'ArrowUp',
+					run: (view) => this.incrementNumericValue(view, 1)
+				},
+				{
+					key: 'ArrowDown',
+					run: (view) => this.incrementNumericValue(view, -1)
+				},
+				{
+					key: 'Shift-ArrowUp',
+					run: (view) => this.incrementNumericValue(view, 10)
+				},
+				{
+					key: 'Shift-ArrowDown',
+					run: (view) => this.incrementNumericValue(view, -10)
+				},
+				{
+					key: 'Alt-ArrowUp',
+					run: (view) => this.incrementNumericValue(view, 0.1)
+				},
+				{
+					key: 'Alt-ArrowDown',
+					run: (view) => this.incrementNumericValue(view, -0.1)
+				},
 				// Custom shortcuts
 				{
 					key: 'Ctrl-S',
@@ -687,7 +709,12 @@ export class HTMLCSSEditorView extends ItemView {
 						this.manualRefreshPreview();
 						return true;
 					}
-				}
+				},
+				// Default keymaps come after custom ones
+				...defaultKeymap,
+				...historyKeymap,
+				...completionKeymap,
+				indentWithTab
 			]),
 
 			// Enhanced tooltips for better UX
@@ -824,6 +851,93 @@ export class HTMLCSSEditorView extends ItemView {
 
 		// Auto-detect from Obsidian's theme
 		return document.body.classList.contains('theme-dark');
+	}
+
+	/**
+	 * Increment or decrement numeric values at cursor position using arrow keys
+	 * Supports integers, decimals, and CSS units (px, %, em, rem, deg, etc.)
+	 */
+	private incrementNumericValue(view: EditorView, delta: number): boolean {
+		const state = view.state;
+		const selection = state.selection.main;
+		
+		// Only work with single cursor (no selection)
+		if (selection.from !== selection.to) {
+			return false;
+		}
+
+		const line = state.doc.lineAt(selection.from);
+		const lineText = line.text;
+		const cursorPosInLine = selection.from - line.from;
+
+		// Regex to match numbers with optional units
+		// Matches: 100, 100px, 1.5em, -50%, 45deg, 0.5, etc.
+		const numberRegex = /-?\d+\.?\d*/g;
+		let match: RegExpExecArray | null;
+		let targetMatch: RegExpExecArray | null = null;
+		let matchStart = -1;
+		let matchEnd = -1;
+
+		// Find the number at or near the cursor position
+		while ((match = numberRegex.exec(lineText)) !== null) {
+			const start = match.index;
+			const end = match.index + match[0].length;
+			
+			// Check if cursor is within or immediately after the number
+			if (cursorPosInLine >= start && cursorPosInLine <= end) {
+				targetMatch = match;
+				matchStart = start;
+				matchEnd = end;
+				break;
+			}
+		}
+
+		if (!targetMatch) {
+			return false;
+		}
+
+		// Parse the current value
+		const currentValue = parseFloat(targetMatch[0]);
+		if (isNaN(currentValue)) {
+			return false;
+		}
+
+		// Calculate new value
+		let newValue = currentValue + delta;
+		
+		// Preserve decimal places if the original had them
+		const hasDecimal = targetMatch[0].includes('.');
+		let newValueStr: string;
+		
+		if (hasDecimal || delta < 1) {
+			// For decimals, use appropriate precision
+			const decimalPlaces = targetMatch[0].split('.')[1]?.length || 1;
+			newValueStr = newValue.toFixed(Math.max(decimalPlaces, 1));
+			// Remove trailing zeros after decimal point
+			newValueStr = newValueStr.replace(/\.?0+$/, '');
+		} else {
+			// For integers, keep as integer
+			newValueStr = Math.round(newValue).toString();
+		}
+
+		// Check for unit after the number (px, %, em, rem, deg, etc.)
+		const unitMatch = lineText.substring(matchEnd).match(/^[a-z%]+/i);
+		const unit = unitMatch ? unitMatch[0] : '';
+
+		// Build the replacement text
+		const replacementText = newValueStr + unit;
+
+		// Calculate absolute positions in the document
+		const from = line.from + matchStart;
+		const to = line.from + matchEnd + unit.length;
+
+		// Apply the change
+		view.dispatch({
+			changes: { from, to, insert: replacementText },
+			selection: { anchor: from + newValueStr.length }
+		});
+
+		return true;
 	}
 
 	private setupResizeHandle() {

@@ -63,6 +63,44 @@ Want something specific? Click "Builder" to make your own. You get a visual time
 ### Performance checking
 Click "Inspector" to see how smooth your animations are running. It shows FPS and tells you if something's choppy.
 
+## Numeric Value Scrubbing
+
+Adjust numbers in your CSS without typing. Just use arrow keys.
+
+### How it works
+Put your cursor on any number in your CSS (like `100px`, `1.5em`, `45deg`, `0.8`) and use arrow keys to change it. You see the changes live in the preview.
+
+```css
+.box {
+  width: 100px;        /* Cursor here, press ↑ to make it 101px */
+  transform: rotate(45deg);  /* ↑↓ to adjust rotation */
+  opacity: 0.8;        /* Alt+↑↓ for small decimal changes */
+}
+```
+
+### Keyboard shortcuts
+- **↑/↓** - Increment/decrement by 1
+- **Shift + ↑/↓** - Change by 10 (faster adjustments)
+- **Alt + ↑/↓** - Change by 0.1 (fine-tuning decimals)
+
+### What it handles
+Works with any CSS value:
+- Pixels: `100px` → `101px`
+- Percentages: `50%` → `51%`
+- Ems/Rems: `1.5em` → `1.6em`
+- Degrees: `45deg` → `46deg`
+- Unitless: `1.5` → `1.6`
+- Negative values: `-10px` → `-9px`
+
+### Quick workflow
+1. Write CSS with a numeric value
+2. Click to place cursor on the number
+3. Press ↑/↓ to adjust
+4. Watch the preview update in real-time
+5. Use Shift or Alt for bigger/smaller steps
+
+Perfect for tweaking transforms, animations, spacing, and sizing until it looks just right.
+
 ## Sass Support
 
 Yeah, it does Sass. Variables, mixins, nesting, functions.
@@ -129,6 +167,8 @@ Try the "Fit to Window" button or refresh with F5. For custom sizes, make sure y
 - Projects are just markdown files - you can edit them normally
 - The preview updates as you type (with a small delay so it's not crazy)
 - Hover over the compilation status to see any Sass errors
+- Use arrow keys on numbers for quick adjustments - way faster than typing
+- Combine numeric scrubbing with live preview for instant visual feedback
 
 ---
 

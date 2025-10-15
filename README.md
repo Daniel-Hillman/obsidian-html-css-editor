@@ -36,6 +36,9 @@ Yeah, it does Sass too. Variables, mixins, nesting - all that good stuff. Plus y
 ### Color Picker
 Click any color in your CSS to change it visually. No more guessing hex codes.
 
+### Numeric Value Scrubbing
+Put your cursor on any number in your CSS and use arrow keys to adjust it. Press ↑/↓ for +/- 1, Shift+↑/↓ for +/- 10, or Alt+↑/↓ for +/- 0.1. Perfect for tweaking transforms, spacing, and animations with instant visual feedback.
+
 ### Animations
 - 20+ ready-made animations (fade, bounce, slide, etc.)
 - Build custom animations with a visual editor
@@ -78,6 +81,14 @@ Toggle the CSS/Sass switch to use Sass. You get variables, mixins, nesting - the
 ### Colors
 Click any color swatch in your CSS to open a color picker.
 
+### Numeric Values
+Place your cursor on any number and use arrow keys to adjust it:
+- ↑/↓ - Change by 1
+- Shift + ↑/↓ - Change by 10
+- Alt + ↑/↓ - Change by 0.1
+
+Works with any CSS value (px, %, em, deg, etc.). Great for fine-tuning transforms, rotations, and spacing.
+
 ### Animations
 - Click "Animations" to browse 20+ presets
 - Click "Builder" to make custom animations
@@ -96,10 +107,13 @@ Press "Save Project", give it a name, pick a folder. It saves as a markdown file
 
 ### Shortcuts 
 
-##### This may not work depedning on your OS. I'm using Windows 10.
+##### This may not work depending on your OS. I'm using Windows 10.
 - `Ctrl+S` - Save as HTML file
 - `Ctrl+Shift+C` - Copy to clipboard
 - `F5` - Refresh preview
+- `↑/↓` - Increment/decrement number at cursor
+- `Shift+↑/↓` - Change by 10
+- `Alt+↑/↓` - Change by 0.1
 
 ### Tips
 - Drag the divider to resize panels
