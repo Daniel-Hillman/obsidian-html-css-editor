@@ -23,6 +23,12 @@ export interface HTMLCSSEditorSettings {
 	enableAutocomplete: boolean;
 	enableCodeFolding: boolean;
 	
+	// Numeric scrubbing settings
+	numericScrubbingEnabled: boolean;
+	numericScrubbingStep: number;
+	numericScrubbingStepLarge: number;
+	numericScrubbingStepSmall: number;
+	
 	// Settings metadata for migration
 	version: number;
 	lastUpdated: string;
@@ -40,6 +46,10 @@ export const DEFAULT_SETTINGS: HTMLCSSEditorSettings = {
 	previewBackground: '#ffffff',
 	enableAutocomplete: true,
 	enableCodeFolding: true,
+	numericScrubbingEnabled: true,
+	numericScrubbingStep: 1,
+	numericScrubbingStepLarge: 10,
+	numericScrubbingStepSmall: 0.1,
 	version: 1,
 	lastUpdated: new Date().toISOString(),
 };
@@ -439,6 +449,57 @@ export class HTMLCSSEditorSettingTab extends PluginSettingTab {
 					.setValue(this.plugin.settings.enableCodeFolding)
 					.onChange(async (value) => {
 						await this.updateSetting('enableCodeFolding', value);
+					}));
+
+			// Numeric Scrubbing Settings
+			containerEl.createEl('h3', { text: 'Numeric Scrubbing' });
+
+			new Setting(containerEl)
+				.setName('Enable numeric scrubbing')
+				.setDesc('Use arrow keys to increment/decrement numbers in CSS')
+				.addToggle(toggle => toggle
+					.setValue(this.plugin.settings.numericScrubbingEnabled)
+					.onChange(async (value) => {
+						await this.updateSetting('numericScrubbingEnabled', value);
+					}));
+
+			new Setting(containerEl)
+				.setName('Normal step')
+				.setDesc('Amount to change when pressing ↑/↓ (default: 1)')
+				.addText(text => text
+					.setPlaceholder('1')
+					.setValue(String(this.plugin.settings.numericScrubbingStep))
+					.onChange(async (value) => {
+						const num = parseFloat(value);
+						if (!isNaN(num) && num > 0) {
+							await this.updateSetting('numericScrubbingStep', num);
+						}
+					}));
+
+			new Setting(containerEl)
+				.setName('Large step')
+				.setDesc('Amount to change when pressing Shift+↑/↓ (default: 10)')
+				.addText(text => text
+					.setPlaceholder('10')
+					.setValue(String(this.plugin.settings.numericScrubbingStepLarge))
+					.onChange(async (value) => {
+						const num = parseFloat(value);
+						if (!isNaN(num) && num > 0) {
+							await this.updateSetting('numericScrubbingStepLarge', num);
+						}
+					}));
+
+			new Setting(containerEl)
+				.setName('Small step')
+				.setDesc('Amount to change when pressing Alt+↑/↓ (default: 0.1)')
+				.addText(text => text
+					.setPlaceholder('0.1')
+					.setValue(String(this.plugin.settings.numericScrubbingStepSmall))
+					.onChange(async (value) => {
+						const num = parseFloat(value);
+						if (!isNaN(num) && num > 0) {
+							await this.updateSetting('numericScrubbingStepSmall', num);
+						}
 					}));
 
 			// Theme Settings

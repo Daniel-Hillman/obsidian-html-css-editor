@@ -3957,3 +3957,130 @@ ional CSS classes for cursor states */
 .html-css-editor-display-flex {
     display: flex !important;
 }
+
+/* Numeric Scrubbing Visual Feedback */
+.cm-line .cm-number-scrubbing {
+    background: rgba(var(--interactive-accent-rgb, 66, 165, 245), 0.15);
+    border-radius: 3px;
+    padding: 0 2px;
+    cursor: ns-resize;
+    transition: background 0.15s ease;
+}
+
+.cm-line .cm-number-scrubbing:hover {
+    background: rgba(var(--interactive-accent-rgb, 66, 165, 245), 0.25);
+    box-shadow: 0 0 0 1px rgba(var(--interactive-accent-rgb, 66, 165, 245), 0.3);
+}
+
+/* Sass Compilation Error Display */
+.html-css-editor-sass-error {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--html-css-editor-error);
+    color: white;
+    padding: 12px 16px;
+    font-family: var(--font-monospace);
+    font-size: 12px;
+    z-index: 100;
+    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.2);
+    max-height: 150px;
+    overflow-y: auto;
+    animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.html-css-editor-sass-error-title {
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.html-css-editor-sass-error-message {
+    opacity: 0.9;
+    line-height: 1.4;
+}
+
+.html-css-editor-sass-error-close {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s ease;
+}
+
+.html-css-editor-sass-error-close:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* Compilation status improvements */
+.html-css-editor-compilation-status {
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.html-css-editor-compilation-status.compiling {
+    background: var(--html-css-editor-warning);
+    color: white;
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+.html-css-editor-compilation-status.success {
+    background: var(--html-css-editor-success);
+    color: white;
+}
+
+.html-css-editor-compilation-status.error {
+    background: var(--html-css-editor-error);
+    color: white;
+    cursor: pointer;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.7;
+    }
+}
+
+/* Performance optimizations */
+.html-css-editor-preview-frame-enhanced {
+    will-change: transform;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+    .html-css-editor-main-container,
+    .html-css-editor-toolbar,
+    .html-css-editor-sass-error,
+    .cm-number-scrubbing {
+        animation: none !important;
+        transition: none !important;
+    }
+}

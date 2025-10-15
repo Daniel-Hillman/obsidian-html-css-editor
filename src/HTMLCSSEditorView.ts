@@ -1,8 +1,8 @@
 import { ItemView, WorkspaceLeaf, Notice, Menu, Modal, FuzzySuggestModal, TFolder, TFile, App, Setting } from 'obsidian';
 import HTMLCSSEditorPlugin from './main';
 import { ExportHandler } from './export';
-import { EditorView, keymap, lineNumbers, highlightActiveLine, tooltips, KeyBinding } from '@codemirror/view';
-import { EditorState, Extension, Transaction } from '@codemirror/state';
+import { EditorView, keymap, lineNumbers, highlightActiveLine, tooltips, KeyBinding, Decoration, DecorationSet, ViewPlugin, ViewUpdate, WidgetType } from '@codemirror/view';
+import { EditorState, Extension, Transaction, Range } from '@codemirror/state';
 import { html } from '@codemirror/lang-html';
 import { css } from '@codemirror/lang-css';
 import { autocompletion, completionKeymap, CompletionContext, CompletionResult, startCompletion, acceptCompletion, closeCompletion } from '@codemirror/autocomplete';
@@ -629,6 +629,7 @@ export class HTMLCSSEditorView extends ItemView {
 			css(),
 			colorPickerPlugin,
 			animationInspectorPlugin,
+			this.createNumericScrubbingHighlight(),
 			EditorView.updateListener.of((update) => {
 				if (update.docChanged) {
 					this.onContentChange();
@@ -673,27 +674,27 @@ export class HTMLCSSEditorView extends ItemView {
 				// Numeric value scrubbing with arrow keys (before defaults)
 				{
 					key: 'ArrowUp',
-					run: (view) => this.incrementNumericValue(view, 1)
+					run: (view) => this.incrementNumericValue(view, this.plugin.settings.numericScrubbingStep)
 				},
 				{
 					key: 'ArrowDown',
-					run: (view) => this.incrementNumericValue(view, -1)
+					run: (view) => this.incrementNumericValue(view, -this.plugin.settings.numericScrubbingStep)
 				},
 				{
 					key: 'Shift-ArrowUp',
-					run: (view) => this.incrementNumericValue(view, 10)
+					run: (view) => this.incrementNumericValue(view, this.plugin.settings.numericScrubbingStepLarge)
 				},
 				{
 					key: 'Shift-ArrowDown',
-					run: (view) => this.incrementNumericValue(view, -10)
+					run: (view) => this.incrementNumericValue(view, -this.plugin.settings.numericScrubbingStepLarge)
 				},
 				{
 					key: 'Alt-ArrowUp',
-					run: (view) => this.incrementNumericValue(view, 0.1)
+					run: (view) => this.incrementNumericValue(view, this.plugin.settings.numericScrubbingStepSmall)
 				},
 				{
 					key: 'Alt-ArrowDown',
-					run: (view) => this.incrementNumericValue(view, -0.1)
+					run: (view) => this.incrementNumericValue(view, -this.plugin.settings.numericScrubbingStepSmall)
 				},
 				// Custom shortcuts
 				{
@@ -854,90 +855,201 @@ export class HTMLCSSEditorView extends ItemView {
 	}
 
 	/**
+	 * Show Sass compilation error in a visible panel
+	 */
+	private showSassError(errorMessage: string) {
+		// Remove any existing error panel
+		const existingError = this.cssEditorContainer.querySelector('.html-css-editor-sass-error');
+		if (existingError) {
+			existingError.remove();
+		}
+
+		// Create error panel
+		const errorPanel = this.cssEditorContainer.createEl('div', {
+			cls: 'html-css-editor-sass-error'
+		});
+
+		errorPanel.createEl('div', {
+			cls: 'html-css-editor-sass-error-title',
+			text: 'Sass Compilation Error'
+		});
+
+		errorPanel.createEl('div', {
+			cls: 'html-css-editor-sass-error-message',
+			text: errorMessage
+		});
+
+		const closeBtn = errorPanel.createEl('button', {
+			cls: 'html-css-editor-sass-error-close',
+			text: '×'
+		});
+
+		closeBtn.addEventListener('click', () => {
+			errorPanel.remove();
+		});
+
+		// Auto-remove after 10 seconds
+		setTimeout(() => {
+			if (errorPanel.parentElement) {
+				errorPanel.remove();
+			}
+		}, 10000);
+	}
+
+	/**
 	 * Increment or decrement numeric values at cursor position using arrow keys
-	 * Supports integers, decimals, and CSS units (px, %, em, rem, deg, etc.)
+	 * Supports integers, decimals, CSS units, and multi-cursor editing
 	 */
 	private incrementNumericValue(view: EditorView, delta: number): boolean {
+		// Check if feature is enabled
+		if (!this.plugin.settings.numericScrubbingEnabled) {
+			return false;
+		}
+
 		const state = view.state;
-		const selection = state.selection.main;
-		
-		// Only work with single cursor (no selection)
-		if (selection.from !== selection.to) {
-			return false;
-		}
+		const changes: Array<{ from: number; to: number; insert: string }> = [];
+		let hasChanges = false;
 
-		const line = state.doc.lineAt(selection.from);
-		const lineText = line.text;
-		const cursorPosInLine = selection.from - line.from;
-
-		// Regex to match numbers with optional units
-		// Matches: 100, 100px, 1.5em, -50%, 45deg, 0.5, etc.
-		const numberRegex = /-?\d+\.?\d*/g;
-		let match: RegExpExecArray | null;
-		let targetMatch: RegExpExecArray | null = null;
-		let matchStart = -1;
-		let matchEnd = -1;
-
-		// Find the number at or near the cursor position
-		while ((match = numberRegex.exec(lineText)) !== null) {
-			const start = match.index;
-			const end = match.index + match[0].length;
-			
-			// Check if cursor is within or immediately after the number
-			if (cursorPosInLine >= start && cursorPosInLine <= end) {
-				targetMatch = match;
-				matchStart = start;
-				matchEnd = end;
-				break;
+		// Process all selections/cursors
+		for (const range of state.selection.ranges) {
+			// Skip if there's a selection (not just a cursor)
+			if (range.from !== range.to) {
+				continue;
 			}
+
+			const line = state.doc.lineAt(range.from);
+			const lineText = line.text;
+			const cursorPosInLine = range.from - line.from;
+
+			// Regex to match numbers with optional units
+			const numberRegex = /-?\d+\.?\d*/g;
+			let match: RegExpExecArray | null;
+			let targetMatch: RegExpExecArray | null = null;
+			let matchStart = -1;
+			let matchEnd = -1;
+
+			// Find the number at or near the cursor position
+			while ((match = numberRegex.exec(lineText)) !== null) {
+				const start = match.index;
+				const end = match.index + match[0].length;
+				
+				// Check if cursor is within or immediately after the number
+				if (cursorPosInLine >= start && cursorPosInLine <= end) {
+					targetMatch = match;
+					matchStart = start;
+					matchEnd = end;
+					break;
+				}
+			}
+
+			if (!targetMatch) {
+				continue;
+			}
+
+			// Parse the current value
+			const currentValue = parseFloat(targetMatch[0]);
+			if (isNaN(currentValue)) {
+				continue;
+			}
+
+			// Calculate new value
+			let newValue = currentValue + delta;
+			
+			// Preserve decimal places if the original had them
+			const hasDecimal = targetMatch[0].includes('.');
+			let newValueStr: string;
+			
+			if (hasDecimal || Math.abs(delta) < 1) {
+				// For decimals, use appropriate precision
+				const decimalPlaces = targetMatch[0].split('.')[1]?.length || 1;
+				newValueStr = newValue.toFixed(Math.max(decimalPlaces, 1));
+				// Remove trailing zeros after decimal point
+				newValueStr = newValueStr.replace(/\.?0+$/, '');
+			} else {
+				// For integers, keep as integer
+				newValueStr = Math.round(newValue).toString();
+			}
+
+			// Check for unit after the number (px, %, em, rem, deg, etc.)
+			const unitMatch = lineText.substring(matchEnd).match(/^[a-z%]+/i);
+			const unit = unitMatch ? unitMatch[0] : '';
+
+			// Build the replacement text
+			const replacementText = newValueStr + unit;
+
+			// Calculate absolute positions in the document
+			const from = line.from + matchStart;
+			const to = line.from + matchEnd + unit.length;
+
+			changes.push({ from, to, insert: replacementText });
+			hasChanges = true;
 		}
 
-		if (!targetMatch) {
+		if (!hasChanges) {
 			return false;
 		}
 
-		// Parse the current value
-		const currentValue = parseFloat(targetMatch[0]);
-		if (isNaN(currentValue)) {
-			return false;
-		}
-
-		// Calculate new value
-		let newValue = currentValue + delta;
-		
-		// Preserve decimal places if the original had them
-		const hasDecimal = targetMatch[0].includes('.');
-		let newValueStr: string;
-		
-		if (hasDecimal || delta < 1) {
-			// For decimals, use appropriate precision
-			const decimalPlaces = targetMatch[0].split('.')[1]?.length || 1;
-			newValueStr = newValue.toFixed(Math.max(decimalPlaces, 1));
-			// Remove trailing zeros after decimal point
-			newValueStr = newValueStr.replace(/\.?0+$/, '');
-		} else {
-			// For integers, keep as integer
-			newValueStr = Math.round(newValue).toString();
-		}
-
-		// Check for unit after the number (px, %, em, rem, deg, etc.)
-		const unitMatch = lineText.substring(matchEnd).match(/^[a-z%]+/i);
-		const unit = unitMatch ? unitMatch[0] : '';
-
-		// Build the replacement text
-		const replacementText = newValueStr + unit;
-
-		// Calculate absolute positions in the document
-		const from = line.from + matchStart;
-		const to = line.from + matchEnd + unit.length;
-
-		// Apply the change
+		// Apply all changes in a single transaction (better for undo/redo)
 		view.dispatch({
-			changes: { from, to, insert: replacementText },
-			selection: { anchor: from + newValueStr.length }
+			changes,
+			userEvent: 'input.type' // Mark as user input for proper undo grouping
 		});
 
 		return true;
+	}
+
+	/**
+	 * Create a CodeMirror extension that highlights numbers for scrubbing
+	 */
+	private createNumericScrubbingHighlight(): Extension {
+		return ViewPlugin.fromClass(
+			class {
+				decorations: DecorationSet;
+
+				constructor(view: EditorView) {
+					this.decorations = this.buildDecorations(view);
+				}
+
+				update(update: ViewUpdate) {
+					if (update.docChanged || update.viewportChanged || update.selectionSet) {
+						this.decorations = this.buildDecorations(update.view);
+					}
+				}
+
+				buildDecorations(view: EditorView): DecorationSet {
+					const decorations: Range<Decoration>[] = [];
+					const selection = view.state.selection.main;
+					
+					// Only highlight on the current line where cursor is
+					if (selection.from === selection.to) {
+						const line = view.state.doc.lineAt(selection.from);
+						const lineText = line.text;
+						const numberRegex = /-?\d+\.?\d*/g;
+						let match;
+
+						while ((match = numberRegex.exec(lineText)) !== null) {
+							const from = line.from + match.index;
+							const to = from + match[0].length;
+							
+							// Highlight the number
+							decorations.push(
+								Decoration.mark({
+									class: 'cm-number-scrubbing',
+									attributes: {
+										title: 'Use ↑/↓ to adjust value'
+									}
+								}).range(from, to)
+							);
+						}
+					}
+
+					return Decoration.set(decorations);
+				}
+			},
+			{
+				decorations: v => v.decorations
+			}
+		);
 	}
 
 	private setupResizeHandle() {
@@ -1093,6 +1205,7 @@ export class HTMLCSSEditorView extends ItemView {
 			css(),
 			colorPickerPlugin,
 			animationInspectorPlugin,
+			this.createNumericScrubbingHighlight(),
 			EditorView.updateListener.of((update) => {
 				if (update.docChanged) {
 					this.onContentChange();
@@ -1152,11 +1265,17 @@ export class HTMLCSSEditorView extends ItemView {
 			// Debounce the preview update with adaptive delay for large files
 			this.clearUpdateTimeout();
 			
-			// Increase delay for larger files to improve performance
+			// Adaptive delay based on content size for better performance
 			const contentSize = this.viewState.htmlContent.length + this.viewState.cssContent.length;
-			const adaptiveDelay = contentSize > 5000 
-				? Math.min(this.plugin.settings.refreshDelay * 2, 1000) 
-				: this.plugin.settings.refreshDelay;
+			let adaptiveDelay = this.plugin.settings.refreshDelay;
+			
+			if (contentSize > 10000) {
+				// Very large files: double the delay
+				adaptiveDelay = Math.min(this.plugin.settings.refreshDelay * 2, 1500);
+			} else if (contentSize > 5000) {
+				// Large files: increase delay by 50%
+				adaptiveDelay = Math.min(this.plugin.settings.refreshDelay * 1.5, 1000);
+			}
 			
 			this.updateTimeout = setTimeout(() => {
 				this.updatePreview();
@@ -2186,20 +2305,26 @@ export class HTMLCSSEditorView extends ItemView {
 			// Sass compiled successfully
 			return result.css;
 		} catch (error) {
-			// Log error quietly to console for debugging
+			// Log error for debugging
 			console.warn('Sass compilation error:', error);
-			const errorMessage = error.message || 'Unknown error';
+			const errorMessage = error instanceof Error ? error.message : String(error);
 
-			// Update status indicator (no popup notification)
+			// Update status indicator
 			if (this.compilationStatusEl) {
 				this.compilationStatusEl.textContent = 'Error';
 				this.compilationStatusEl.removeClass('compiling', 'success');
 				this.compilationStatusEl.addClass('error');
-				// Add error message as tooltip so users can see it on hover
-				this.compilationStatusEl.setAttribute('title', errorMessage);
+				this.compilationStatusEl.setAttribute('title', `Click to see error: ${errorMessage}`);
+				
+				// Make status clickable to show error details
+				this.compilationStatusEl.style.cursor = 'pointer';
+				this.compilationStatusEl.onclick = () => this.showSassError(errorMessage);
 			}
 
-			// Return original content with error comment (no popup)
+			// Show error panel in editor
+			this.showSassError(errorMessage);
+
+			// Return original content with error comment
 			return `/* Sass compilation error: ${errorMessage} */\n${sassContent}`;
 		}
 	}
